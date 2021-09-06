@@ -1,14 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using Isu.Entities;
 using Isu.Tools;
 
 namespace Isu.Services
 {
-    class IsuService : IIsuService
+    public class IsuService : IIsuService
     {
         private int _nextId = 0;
+
+        public IsuService()
+        {
+            Groups = new List<Group>();
+        }
+
         public List<Group> Groups { get; }
         public Group AddGroup(string name)
         {
@@ -16,9 +20,10 @@ namespace Isu.Services
             Groups.Add(newGroup);
             return newGroup;
         }
+
         public Student AddStudent(Group group, string name)
         {
-            var newStudent = new Student(name, _nextId++);
+            var newStudent = new Student(name, _nextId++, group.Name, group.Course);
             group.AddStudent(newStudent);
             return newStudent;
         }
@@ -34,7 +39,7 @@ namespace Isu.Services
                 }
             }
 
-            throw new IsuException("");
+            throw new IsuException("Error: student wasn't finded");
         }
 
         public Student FindStudent(string name)
@@ -68,14 +73,47 @@ namespace Isu.Services
         {
             var students = new List<Student>();
             foreach (Group group in Groups)
-            { 
-                students.AddRange(group.FindStudents())
+            {
+                if (group.Course == courseNumber)
+                {
+                    students.AddRange(group.Students);
+                }
             }
+
+            return students;
         }
 
-        Group FindGroup(string groupName);
-        List<Group> FindGroups(CourseNumber courseNumber);
+        public Group FindGroup(string groupName)
+        {
+            foreach (Group group in Groups)
+            {
+                if (group.Name == groupName)
+                {
+                    return group;
+                }
+            }
 
-        void ChangeStudentGroup(Student student, Group newGroup);
+            return null;
+        }
+
+        public List<Group> FindGroups(CourseNumber courseNumber)
+        {
+            var groups = new List<Group>();
+            foreach (Group group in Groups)
+            {
+                if (group.Course == courseNumber)
+                {
+                    groups.Add(group);
+                }
+            }
+
+            return groups;
+        }
+
+        public void ChangeStudentGroup(Student student, Group newGroup)
+        {
+            FindGroup(student.GroupName).RemoveStudent(student);
+            newGroup.AddStudent(student);
+        }
     }
 }

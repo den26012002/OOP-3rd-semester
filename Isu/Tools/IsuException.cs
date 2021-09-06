@@ -6,7 +6,6 @@ namespace Isu.Tools
     {
         public IsuException()
         {
-
         }
 
         public IsuException(string message)
@@ -17,7 +16,6 @@ namespace Isu.Tools
         public IsuException(string message, Exception innerException)
             : base(message, innerException)
         {
-
         }
     }
 }

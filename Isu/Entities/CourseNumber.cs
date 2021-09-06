@@ -1,30 +1,32 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Isu.Tools;
 
 namespace Isu.Entities
 {
     public class CourseNumber
     {
-        public CourseNumber(int number) 
+        private int _course;
+        public CourseNumber(int course)
         {
-            Number = number;
+            Course = course;
         }
 
-        public int Number
+        public int Course
         {
             get
             {
-                return Number;
+                return _course;
             }
-       
-            set 
+            set
             {
-                if (value > 0 && value <= 6) 
+                if (value > 0 && value <= 6)
                 {
-                    Number = value;
+                    _course = value;
                 }
-            } 
+                else
+                {
+                    throw new IsuException("Error: incorrect number of course");
+                }
+            }
         }
     }
 }
