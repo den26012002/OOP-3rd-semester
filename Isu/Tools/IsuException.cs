@@ -6,14 +6,18 @@ namespace Isu.Tools
     {
         public IsuException()
         {
+
         }
 
-        public IsuException(string message) : base(message)
+        public IsuException(string message)
+            : base(message)
         {
         }
 
-        public IsuException(string message, Exception innerException) : base(message, innerException)
+        public IsuException(string message, Exception innerException)
+            : base(message, innerException)
         {
+
         }
     }
 }
