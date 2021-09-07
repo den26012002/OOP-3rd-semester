@@ -4,13 +4,14 @@ namespace Isu.Entities
 {
     public class CourseNumber
     {
-        private int _course;
-        public CourseNumber(int course)
+        private uint _course;
+        private uint _maxCource = 6;
+        public CourseNumber(uint course)
         {
             Course = course;
         }
 
-        public int Course
+        public uint Course
         {
             get
             {
@@ -18,14 +19,12 @@ namespace Isu.Entities
             }
             set
             {
-                if (value > 0 && value <= 6)
-                {
-                    _course = value;
-                }
-                else
+                if (value > _maxCource)
                 {
                     throw new IsuException("Error: incorrect number of course");
                 }
+
+                _course = value;
             }
         }
     }

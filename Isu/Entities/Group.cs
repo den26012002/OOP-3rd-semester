@@ -5,45 +5,20 @@ namespace Isu.Entities
 {
     public class Group
     {
-        private string _name;
-        private int _maxNumberOfStudents = 20;
+        private readonly int _maxNumberOfStudents = 20;
         public Group(string name)
         {
+            if (!IsValidName(name))
+            {
+                throw new IsuException("Error: incorrect name of group");
+            }
+
             Name = name;
             Students = new List<Student>();
-            Course = new CourseNumber(name[2] - '0');
+            Course = new CourseNumber((uint)(name[2] - '0'));
         }
 
-        public string Name
-        {
-            get
-            {
-                return _name;
-            }
-            private set
-            {
-                if (value.Length != 5 && value.Length != 6)
-                {
-                    throw new IsuException("Error: incorrect name of group");
-                }
-
-                if (value[0] < 'A' || value[0] > 'Z')
-                {
-                    throw new IsuException("Error: incorrect name of group");
-                }
-
-                for (int i = 1; i < value.Length; ++i)
-                {
-                    if (value[i] < '0' || value[i] > '9')
-                    {
-                        throw new IsuException("Error: incorrect name of group");
-                    }
-                }
-
-                _name = value;
-            }
-        }
-
+        public string Name { get; }
         public List<Student> Students { get; }
         public CourseNumber Course { get; }
         public void AddStudent(Student student)
@@ -53,42 +28,24 @@ namespace Isu.Entities
                 throw new IsuException("Error: unable to add student to the group: too many students");
             }
 
-            student.GroupName = Name;
-            student.Course = Course;
+            student.Group = this;
             Students.Add(student);
         }
 
         public void RemoveStudent(Student student)
         {
             Students.Remove(student);
-            student.GroupName = null;
-            student.Course = null;
+            student.Group = null;
         }
 
         public Student FindStudent(int id)
         {
-            foreach (Student student in Students)
-            {
-                if (student.Id == id)
-                {
-                    return student;
-                }
-            }
-
-            return null;
+            return Students.Find(student => student.Id == id);
         }
 
         public Student FindStudent(string name)
         {
-            foreach (Student student in Students)
-            {
-                if (student.Name == name)
-                {
-                    return student;
-                }
-            }
-
-            return null;
+            return Students.Find(student => student.Name == name);
         }
 
         public List<Student> FindStudents(CourseNumber courseNumber)
@@ -103,6 +60,29 @@ namespace Isu.Entities
             }
 
             return students;
+        }
+
+        private bool IsValidName(string name)
+        {
+            if (name.Length != 5 && name.Length != 6)
+            {
+                return false;
+            }
+
+            if (name[0] < 'A' || name[0] > 'Z')
+            {
+                return false;
+            }
+
+            for (int i = 1; i < name.Length; ++i)
+            {
+                if (name[i] < '0' || name[i] > '9')
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
     }
 }

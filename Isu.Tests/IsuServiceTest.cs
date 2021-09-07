@@ -22,7 +22,7 @@ namespace Isu.Tests
             var isuService = new IsuService();
             Group group = isuService.AddGroup("M3200");
             Student student = isuService.AddStudent(group, "Attaboy");
-            if (student.GroupName != group.Name || !group.Students.Contains(student))
+            if (student.Group.Name != group.Name || !group.Students.Contains(student))
             {
                 Assert.Fail();
             }
@@ -60,7 +60,7 @@ namespace Isu.Tests
             Student student = isuService.AddStudent(group, "Debtor");
             Group newGroup = isuService.AddGroup("M3212");
             isuService.ChangeStudentGroup(student, newGroup);
-            if (student.GroupName != newGroup.Name || !newGroup.Students.Contains(student))
+            if (student.Group.Name != newGroup.Name || !newGroup.Students.Contains(student))
             {
                 Assert.Fail();
             }

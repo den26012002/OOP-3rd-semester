@@ -23,7 +23,7 @@ namespace Isu.Services
 
         public Student AddStudent(Group group, string name)
         {
-            var newStudent = new Student(name, _nextId++, group.Name, group.Course);
+            var newStudent = new Student(name, _nextId++, group);
             group.AddStudent(newStudent);
             return newStudent;
         }
@@ -112,7 +112,7 @@ namespace Isu.Services
 
         public void ChangeStudentGroup(Student student, Group newGroup)
         {
-            FindGroup(student.GroupName).RemoveStudent(student);
+            FindGroup(student.Group.Name).RemoveStudent(student);
             newGroup.AddStudent(student);
         }
     }

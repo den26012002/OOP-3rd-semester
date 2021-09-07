@@ -2,17 +2,16 @@
 {
     public class Student
     {
-        public Student(string name, int id, string groupName, CourseNumber courseNumber)
+        public Student(string name, int id, Group group)
         {
             Name = name;
             Id = id;
-            GroupName = groupName;
-            Course = courseNumber;
+            Group = group;
         }
 
         public int Id { get; }
         public string Name { get; }
-        public string GroupName { get; set; }
-        public CourseNumber Course { get; set; }
+        public Group Group { get; set; }
+        public CourseNumber Course { get => Group.Course; }
     }
 }
