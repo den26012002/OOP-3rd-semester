@@ -3,7 +3,7 @@ using Shops.Entities;
 
 namespace Shops.Services
 {
-    public class ShopManager
+    public class ShopManager : IShopManager
     {
         private uint _nextShopId = 0;
         private uint _nextProductId = 0;

@@ -31,6 +31,27 @@ namespace Shops.Entities
             }
         }
 
+        public uint GetPrice(Dictionary<Product, uint> shoppingList)
+        {
+            uint purchasePrice = 0;
+            foreach (Product product in shoppingList.Keys)
+            {
+                if (!HasProduct(product))
+                {
+                    throw new ShopsException("Error: there is no product with name: " + product.Name);
+                }
+
+                if (!HasProduct(product, shoppingList[product]))
+                {
+                    throw new ShopsException("Error: there is not enought products with name: " + product.Name);
+                }
+
+                purchasePrice += ProductList[product].Price * shoppingList[product];
+            }
+
+            return purchasePrice;
+        }
+
         public void Buy(Person customer, Dictionary<Product, uint> shoppingList)
         {
             uint purchasePrice = 0;
