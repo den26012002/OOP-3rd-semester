@@ -1,24 +1,31 @@
-﻿namespace Shops.Entities
+﻿using Shops.Tools;
+
+namespace Shops.Entities
 {
     public class Person
     {
-        public Person(string name, int money)
+        public Person(string name, uint money)
         {
             Name = name;
             Money = money;
         }
 
         public string Name { get; }
-        public int Money { get; private set; } // пусть можно брать в долг
+        public uint Money { get; private set; }
 
         public void SpendMoney(uint amount)
         {
-            Money -= (int)amount;
+            if (amount > Money)
+            {
+                throw new ShopsException($"Error: person {Name} has not enough money");
+            }
+
+            Money -= amount;
         }
 
         public void EarnMoney(uint amount)
         {
-            Money += (int)amount;
+            Money += amount;
         }
     }
 }

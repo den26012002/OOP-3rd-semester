@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Shops.Entities;
+using Shops.Tools;
 
 namespace Shops.Services
 {
@@ -7,55 +8,44 @@ namespace Shops.Services
     {
         private uint _nextShopId = 0;
         private uint _nextProductId = 0;
+        private List<Shop> _shops;
+        private List<Product> _products;
         public ShopManager()
         {
-            Shops = new List<Shop>();
-            Products = new List<Product>();
+            _shops = new List<Shop>();
+            _products = new List<Product>();
         }
 
-        public List<Shop> Shops { get; }
-        public List<Product> Products { get; }
+        public IReadOnlyList<Shop> Shops { get => _shops; }
+        public IReadOnlyList<Product> Products { get => _products; }
         public Shop Create(string shopName, Address shopAddress)
         {
             var newShop = new Shop(shopName, shopAddress, _nextShopId++);
-            Shops.Add(newShop);
+            _shops.Add(newShop);
             return newShop;
         }
 
         public Product RegisterProduct(string productName)
         {
             var newProduct = new Product(productName, _nextProductId++);
-            Products.Add(newProduct);
+            _products.Add(newProduct);
             return newProduct;
         }
 
-        public Dictionary<Product, ProductInfo> CreateDeliveryList()
-        {
-            return new Dictionary<Product, ProductInfo>();
-        }
-
-        public Dictionary<Product, uint> CreateShoppingList()
-        {
-            return new Dictionary<Product, uint>();
-        }
-
-        public Shop FindCheapestShop(Dictionary<Product, uint> shoppingList)
+        public Shop FindCheapestShop(List<ProductRequest> shoppingList)
         {
             uint? minPurchasePrice = null;
             Shop cheapestShop = null;
             foreach (Shop shop in Shops)
             {
                 uint? purchasePrice = 0;
-                foreach (Product product in shoppingList.Keys)
+                try
                 {
-                    uint count = shoppingList[product];
-                    if (!shop.HasProduct(product, count))
-                    {
-                        purchasePrice = null;
-                        break;
-                    }
-
-                    purchasePrice += shop.GetProductInfo(product).Price * count;
+                    purchasePrice = shop.GetPrice(shoppingList);
+                }
+                catch (ShopsException)
+                {
+                    purchasePrice = null;
                 }
 
                 if (purchasePrice != null && (minPurchasePrice == null || purchasePrice < minPurchasePrice))

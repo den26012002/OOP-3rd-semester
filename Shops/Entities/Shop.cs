@@ -5,70 +5,60 @@ namespace Shops.Entities
 {
     public class Shop
     {
+        private List<ProductInfo> _productList;
         public Shop(string name, Address address, uint id)
         {
             Name = name;
             Address = address;
             Id = id;
-            ProductList = new Dictionary<Product, ProductInfo>();
+            _productList = new List<ProductInfo>();
         }
 
         public uint Id { get; }
         public string Name { get; }
         public Address Address { get; }
-        private Dictionary<Product, ProductInfo> ProductList { get; }
-        public void AddProducts(Dictionary<Product, ProductInfo> deliveryList)
+        private IReadOnlyList<ProductInfo> ProductList { get => _productList; }
+        public void AddProducts(List<ProductInfo> deliveryList)
         {
-            foreach (Product product in deliveryList.Keys)
+            foreach (ProductInfo deliveryProductInfo in deliveryList)
             {
-                ProductInfo productInfo = deliveryList[product];
-                if (!ProductList.ContainsKey(product))
+                ProductInfo oldProductInfo = _productList.Find(productInfo => productInfo.Product == deliveryProductInfo.Product);
+                if (oldProductInfo == null)
                 {
-                    ProductList.Add(product, new ProductInfo(0, 0));
+                    _productList.Add(deliveryProductInfo);
                 }
-
-                ProductList[product] = new ProductInfo(ProductList[product].Count + productInfo.Count, productInfo.Price);
+                else
+                {
+                    oldProductInfo = new ProductInfo(oldProductInfo.Product, oldProductInfo.Count + deliveryProductInfo.Count, deliveryProductInfo.Price);
+                }
             }
         }
 
-        public uint GetPrice(Dictionary<Product, uint> shoppingList)
+        public uint GetPrice(List<ProductRequest> shoppingList)
         {
             uint purchasePrice = 0;
-            foreach (Product product in shoppingList.Keys)
+            foreach (ProductRequest productRequest in shoppingList)
             {
+                Product product = productRequest.Product;
                 if (!HasProduct(product))
                 {
                     throw new ShopsException("Error: there is no product with name: " + product.Name);
                 }
 
-                if (!HasProduct(product, shoppingList[product]))
+                if (!HasProduct(product, productRequest.Count))
                 {
                     throw new ShopsException("Error: there is not enought products with name: " + product.Name);
                 }
 
-                purchasePrice += ProductList[product].Price * shoppingList[product];
+                purchasePrice += _productList.Find(productInfo => productInfo.Product == product).Price * productRequest.Count;
             }
 
             return purchasePrice;
         }
 
-        public void Buy(Person customer, Dictionary<Product, uint> shoppingList)
+        public void Buy(Person customer, List<ProductRequest> shoppingList)
         {
-            uint purchasePrice = 0;
-            foreach (Product product in shoppingList.Keys)
-            {
-                if (!HasProduct(product))
-                {
-                    throw new ShopsException("Error: there is no product with name: " + product.Name);
-                }
-
-                if (!HasProduct(product, shoppingList[product]))
-                {
-                    throw new ShopsException("Error: there is not enought products with name: " + product.Name);
-                }
-
-                purchasePrice += ProductList[product].Price * shoppingList[product];
-            }
+            uint purchasePrice = GetPrice(shoppingList);
 
             if (customer.Money - purchasePrice < 0)
             {
@@ -77,9 +67,11 @@ namespace Shops.Entities
 
             customer.SpendMoney(purchasePrice);
 
-            foreach (Product product in shoppingList.Keys)
+            foreach (ProductRequest productRequest in shoppingList)
             {
-                ProductList[product].Count -= shoppingList[product];
+                Product product = productRequest.Product;
+                ProductInfo productInfo = _productList.Find(productInfo => productInfo.Product == product);
+                productInfo = new ProductInfo(productInfo.Product, productInfo.Count - productRequest.Count, productInfo.Price);
             }
         }
 
@@ -90,7 +82,7 @@ namespace Shops.Entities
                 throw new ShopsException($"Error: there is no product with name: \"{product.Name}\" in shop with name \"{Name}\"");
             }
 
-            return (ProductInfo)ProductList[product].Clone();
+            return _productList.Find(productInfo => productInfo.Product == product);
         }
 
         public void UpdatePrice(Product product, uint newPrice)
@@ -100,17 +92,18 @@ namespace Shops.Entities
                 throw new ShopsException($"Error: there is no product with name \"{product.Name}\" in shop with name \"{Name}\"");
             }
 
-            ProductList[product].Price = newPrice;
+            ProductInfo productInfo = _productList.Find(productInfo => productInfo.Product == product);
+            productInfo = new ProductInfo(productInfo.Product, productInfo.Count, newPrice);
         }
 
         public bool HasProduct(Product product)
         {
-            return ProductList.ContainsKey(product);
+            return _productList.Find(productInfo => productInfo.Product == product) != null;
         }
 
         public bool HasProduct(Product product, uint count)
         {
-            return HasProduct(product) && ProductList[product].Count >= count;
+            return HasProduct(product) && _productList.Find(productInfo => productInfo.Product == product).Count >= count;
         }
     }
 }

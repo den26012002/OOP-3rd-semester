@@ -1,16 +1,14 @@
 ﻿namespace Shops.Entities
 {
-    public class ProductInfo
+    public class ProductRequest
     {
-        public ProductInfo(Product product, uint count, uint price)
+        public ProductRequest(Product product, uint count)
         {
             Product = product;
             Count = count;
-            Price = price;
         }
 
         public Product Product { get; }
         public uint Count { get; }
-        public uint Price { get; }
     }
 }

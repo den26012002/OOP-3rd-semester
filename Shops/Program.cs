@@ -1,4 +1,4 @@
-﻿using Shops.Services;
+﻿/*using Shops.Services;*/
 
 namespace Shops
 {
@@ -6,10 +6,10 @@ namespace Shops
     {
         private static void Main()
         {
-            var manager = new ShopManager();
+            /*var manager = new ShopManager();
             var uIManager = new ShopUIManager();
             var service = new ShopsService(manager, uIManager);
-            service.Run();
+            service.Run();*/
         }
     }
 }

@@ -5,12 +5,10 @@ namespace Shops.Services
 {
     public interface IShopManager
     {
-        List<Shop> Shops { get; }
-        List<Product> Products { get; }
+        IReadOnlyList<Shop> Shops { get; }
+        IReadOnlyList<Product> Products { get; }
         Shop Create(string shopName, Address shopAddress);
         Product RegisterProduct(string productName);
-        Dictionary<Product, ProductInfo> CreateDeliveryList();
-        Dictionary<Product, uint> CreateShoppingList();
-        Shop FindCheapestShop(Dictionary<Product, uint> shoppingList);
+        Shop FindCheapestShop(List<ProductRequest> shoppingList);
     }
 }

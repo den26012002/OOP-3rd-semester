@@ -1,14 +1,14 @@
-﻿using System;
+﻿/*using System;
 using System.Collections.Generic;
 using Shops.Entities;
 using Shops.Tools;
-using Shops.UI;
+using Shops.UI;*/
 
 namespace Shops.Services
 {
     public class ShopsService
     {
-        private IShopManager _manager;
+        /*private IShopManager _manager;
         private IShopUIManager _uIManager;
 
         private Person _customer;
@@ -259,6 +259,6 @@ namespace Shops.Services
                     new Address(shopRegistrationStreetField.GetResult(), shopRegistrationHouseNumberField.GetResult()));
             }));
             managerMenu.AddSelectionAction(new MenuAction<string>("3.Вернуться в главное меню", () => { _uIManager.SetActiveElement(managerMenu.ParentElement); }));
-        }
+        }*/
     }
 }
