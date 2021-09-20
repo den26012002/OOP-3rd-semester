@@ -1,19 +1,19 @@
-﻿/*using System;
+﻿using System;
 using System.Collections.Generic;
 using Shops.Entities;
 using Shops.Tools;
-using Shops.UI;*/
+using Shops.UI;
 
 namespace Shops.Services
 {
     public class ShopsService
     {
-        /*private IShopManager _manager;
+        private IShopManager _manager;
         private IShopUIManager _uIManager;
 
         private Person _customer;
-        private Dictionary<Product, uint> _shoppingList;
-        private Dictionary<Product, ProductInfo> _deliveryList;
+        private List<ProductRequest> _shoppingList;
+        private List<ProductInfo> _deliveryList;
 
         private ShopsUISelectionMenu<string> mainMenu;
         private ShopsUISelectionMenu<string> customerMenu;
@@ -24,8 +24,8 @@ namespace Shops.Services
             _manager = manager;
             _uIManager = uIManager;
             _customer = new Person("User", 100);
-            _shoppingList = new Dictionary<Product, uint>();
-            _deliveryList = new Dictionary<Product, ProductInfo>();
+            _shoppingList = new List<ProductRequest>();
+            _deliveryList = new List<ProductInfo>();
             MakeUI();
         }
 
@@ -47,13 +47,19 @@ namespace Shops.Services
             MakeCustomerMenu(customerMenu);
             MakeSellerMenu(sellerMenu);
             MakeManagerMenu(managerMenu);
-            mainMenu.AddSelectionAction(new MenuAction<string>("1.Режим покупателя", () => { _uIManager.SetActiveElement(customerMenu); }));
+            mainMenu.AddSelectionAction(new MenuAction<string>("1.Режим покупателя", () =>
+            {
+                _uIManager.SetActiveElement(customerMenu);
+            }));
             mainMenu.AddSelectionAction(new MenuAction<string>("2.Режим продавца", () =>
             {
                 UpdateSellerMenu(sellerMenu);
                 _uIManager.SetActiveElement(sellerMenu);
             }));
-            mainMenu.AddSelectionAction(new MenuAction<string>("3.Режим менеджера", () => { _uIManager.SetActiveElement(managerMenu); }));
+            mainMenu.AddSelectionAction(new MenuAction<string>("3.Режим менеджера", () =>
+            {
+                _uIManager.SetActiveElement(managerMenu);
+            }));
         }
 
         private void MakeCustomerMenu(ShopsUISelectionMenu<string> customerMenu)
@@ -62,20 +68,29 @@ namespace Shops.Services
             customerMenu.AddChildElement(customerBuyingMenu);
             MakeCustomerBuyingMenu(customerBuyingMenu);
 
-            customerMenu.AddSelectionAction(new MenuAction<string>("1.Заработать денег", () => { _customer.EarnMoney((uint)new Random().Next() % 10); }));
+            customerMenu.AddSelectionAction(new MenuAction<string>("1.Заработать денег", () =>
+            {
+                _customer.EarnMoney((uint)new Random().Next() % 10);
+            }));
             customerMenu.AddSelectionAction(new MenuAction<string>("2.Купить товары", () =>
             {
                 UpdateCustomerBuyingMenu(customerBuyingMenu);
                 _uIManager.SetActiveElement(customerBuyingMenu);
             }));
-            customerMenu.AddSelectionAction(new MenuAction<string>("3.Вернуться в главное меню", () => { _uIManager.SetActiveElement(customerMenu.ParentElement); }));
+            customerMenu.AddSelectionAction(new MenuAction<string>("3.Вернуться в главное меню", () =>
+            {
+                _uIManager.SetActiveElement(customerMenu.ParentElement);
+            }));
         }
 
         private void MakeCustomerBuyingMenu(ShopUIPersonMultiSelectionMenu<string> customerBuyingMenu)
         {
             ShopsUISelectionMenu<string> customerAcceptBuyingMenu = _uIManager.CreateSelectionMenu<string>("Как купить?");
             ShopsUISelectionMenu<string> errorMenu = _uIManager.CreateSelectionMenu<string>("Подходящий магазин не найден");
-            errorMenu.AddSelectionAction(new MenuAction<string>("Вернуться", () => { _uIManager.SetActiveElement(errorMenu.ParentElement); }));
+            errorMenu.AddSelectionAction(new MenuAction<string>("Вернуться", () =>
+            {
+                _uIManager.SetActiveElement(errorMenu.ParentElement);
+            }));
             customerAcceptBuyingMenu.AddChildElement(errorMenu);
 
             ShopsUISelectionMenu<string> customerShopSelectionMenu = _uIManager.CreateSelectionMenu<string>("Выберите магазин:");
@@ -112,7 +127,10 @@ namespace Shops.Services
                 UpdateCustomerShopSelectionMenu(customerShopSelectionMenu);
                 _uIManager.SetActiveElement(customerShopSelectionMenu);
             }));
-            customerAcceptBuyingMenu.AddSelectionAction(new MenuAction<string>("3.Отменить покупку", () => { _uIManager.SetActiveElement(customerAcceptBuyingMenu.ParentElement.ParentElement); }));
+            customerAcceptBuyingMenu.AddSelectionAction(new MenuAction<string>("3.Отменить покупку", () =>
+            {
+                _uIManager.SetActiveElement(customerAcceptBuyingMenu.ParentElement.ParentElement);
+            }));
             customerAcceptBuyingMenu.AddChildElement(customerShopSelectionMenu);
 
             customerBuyingMenu.AddChildElement(customerAcceptBuyingMenu);
@@ -122,20 +140,25 @@ namespace Shops.Services
         {
             customerBuyingMenu.ClearActions();
 
-            customerBuyingMenu.AddPreSelectionAction(new MenuAction<string>("Clearing the shoppingList", () => { _shoppingList.Clear(); }));
+            customerBuyingMenu.AddPreSelectionAction(new MenuAction<string>("Clearing the shoppingList", () =>
+            {
+                _shoppingList.Clear();
+            }));
 
             foreach (Product product in _manager.Products)
             {
                 customerBuyingMenu.AddSelectionAction(new MenuAction<string>(product.Name, () =>
                 {
-                    _shoppingList.Add(product, 0);
                     ShopsUIInputField<uint> productBuyingNumberField = _uIManager.CreateInputField<uint>($"Введите количество товара \"{product.Name}\":");
                     productBuyingNumberField.Show();
-                    _shoppingList[product] = productBuyingNumberField.GetResult();
+                    _shoppingList.Add(new ProductRequest(product, productBuyingNumberField.GetResult()));
                 }));
             }
 
-            customerBuyingMenu.AddPostSelectionAction(new MenuAction<string>("Show next menu", () => { _uIManager.SetActiveElement(customerBuyingMenu.ChildElements[0]); }));
+            customerBuyingMenu.AddPostSelectionAction(new MenuAction<string>("Show next menu", () =>
+            {
+                _uIManager.SetActiveElement(customerBuyingMenu.ChildElements[0]);
+            }));
         }
 
         private void MakeCustomerShopSelectionMenu(ShopsUISelectionMenu<string> customerShopSelectionMenu)
@@ -175,7 +198,10 @@ namespace Shops.Services
                 }));
             }
 
-            customerShopSelectionMenu.AddSelectionAction(new MenuAction<string>("Вернуться к выбору способа покупки", () => { _uIManager.SetActiveElement(customerShopSelectionMenu.ParentElement); }));
+            customerShopSelectionMenu.AddSelectionAction(new MenuAction<string>("Вернуться к выбору способа покупки", () =>
+            {
+                _uIManager.SetActiveElement(customerShopSelectionMenu.ParentElement);
+            }));
         }
 
         private void MakeSellerMenu(ShopsUISelectionMenu<string> sellerMenu)
@@ -200,7 +226,10 @@ namespace Shops.Services
                 }));
             }
 
-            sellerMenu.AddSelectionAction(new MenuAction<string>("Вернуться в главное меню", () => { _uIManager.SetActiveElement(sellerMenu.ParentElement); }));
+            sellerMenu.AddSelectionAction(new MenuAction<string>("Вернуться в главное меню", () =>
+            {
+                _uIManager.SetActiveElement(sellerMenu.ParentElement);
+            }));
         }
 
         private void UpdateShopMenu(ShopsUIShopSelectionMenu<string> shopMenu)
@@ -212,29 +241,39 @@ namespace Shops.Services
                 UpdateDeliveryMenu((ShopsUIShopMultiSelectionMenu<string>)shopMenu.ChildElements[0]);
                 _uIManager.SetActiveElement(shopMenu.ChildElements[0]);
             }));
-            shopMenu.AddSelectionAction(new MenuAction<string>("2.Вернуться", () => { _uIManager.SetActiveElement(shopMenu.ParentElement); }));
+            shopMenu.AddSelectionAction(new MenuAction<string>("2.Вернуться", () =>
+            {
+                _uIManager.SetActiveElement(shopMenu.ParentElement);
+            }));
         }
 
         private void UpdateDeliveryMenu(ShopsUIShopMultiSelectionMenu<string> deliveryMenu)
         {
             deliveryMenu.ClearActions();
-            deliveryMenu.AddPreSelectionAction(new MenuAction<string>("Clear delivery list", () => { _deliveryList.Clear(); }));
+            deliveryMenu.AddPreSelectionAction(new MenuAction<string>("Clear delivery list", () =>
+            {
+                _deliveryList.Clear();
+            }));
             foreach (Product product in _manager.Products)
             {
                 deliveryMenu.AddSelectionAction(new MenuAction<string>(product.Name, () =>
                 {
-                    _deliveryList.Add(product, new ProductInfo(0, 0));
                     ShopsUIInputField<uint> productDeliveryNumberField = _uIManager.CreateInputField<uint>($"Введите количество товара {product.Name}:");
                     ShopsUIInputField<uint> productDeliveryPriceField = _uIManager.CreateInputField<uint>($"Введите цену на товар {product.Name}:");
                     productDeliveryNumberField.Show();
                     productDeliveryPriceField.Show();
-                    _deliveryList[product].Count = productDeliveryNumberField.GetResult();
-                    _deliveryList[product].Price = productDeliveryPriceField.GetResult();
+                    _deliveryList.Add(new ProductInfo(product, productDeliveryNumberField.GetResult(), productDeliveryPriceField.GetResult()));
                 }));
             }
 
-            deliveryMenu.AddPostSelectionAction(new MenuAction<string>("Delivery products", () => { deliveryMenu.Shop.AddProducts(_deliveryList); }));
-            deliveryMenu.AddPostSelectionAction(new MenuAction<string>("Return", () => { _uIManager.SetActiveElement(deliveryMenu.ParentElement); }));
+            deliveryMenu.AddPostSelectionAction(new MenuAction<string>("Delivery products", () =>
+            {
+                deliveryMenu.Shop.AddProducts(_deliveryList);
+            }));
+            deliveryMenu.AddPostSelectionAction(new MenuAction<string>("Return", () =>
+            {
+                _uIManager.SetActiveElement(deliveryMenu.ParentElement);
+            }));
         }
 
         private void MakeManagerMenu(ShopsUISelectionMenu<string> managerMenu)
@@ -258,7 +297,10 @@ namespace Shops.Services
                     shopRegistrationNameField.GetResult(),
                     new Address(shopRegistrationStreetField.GetResult(), shopRegistrationHouseNumberField.GetResult()));
             }));
-            managerMenu.AddSelectionAction(new MenuAction<string>("3.Вернуться в главное меню", () => { _uIManager.SetActiveElement(managerMenu.ParentElement); }));
-        }*/
+            managerMenu.AddSelectionAction(new MenuAction<string>("3.Вернуться в главное меню", () =>
+            {
+                _uIManager.SetActiveElement(managerMenu.ParentElement);
+            }));
+        }
     }
 }
