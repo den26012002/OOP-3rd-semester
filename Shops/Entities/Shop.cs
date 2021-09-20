@@ -71,7 +71,9 @@ namespace Shops.Entities
             {
                 Product product = productRequest.Product;
                 ProductInfo productInfo = _productList.Find(productInfo => productInfo.Product == product);
-                productInfo = new ProductInfo(productInfo.Product, productInfo.Count - productRequest.Count, productInfo.Price);
+                var newProductInfo = new ProductInfo(productInfo.Product, productInfo.Count - productRequest.Count, productInfo.Price);
+                _productList.Remove(productInfo);
+                _productList.Add(newProductInfo);
             }
         }
 
@@ -93,7 +95,9 @@ namespace Shops.Entities
             }
 
             ProductInfo productInfo = _productList.Find(productInfo => productInfo.Product == product);
-            productInfo = new ProductInfo(productInfo.Product, productInfo.Count, newPrice);
+            var newProductInfo = new ProductInfo(productInfo.Product, productInfo.Count, newPrice);
+            _productList.Remove(productInfo);
+            _productList.Add(newProductInfo);
         }
 
         public bool HasProduct(Product product)
