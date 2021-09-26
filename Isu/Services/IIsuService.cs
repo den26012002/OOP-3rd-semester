@@ -7,6 +7,7 @@ namespace Isu.Services
     {
         Group AddGroup(string name);
         Student AddStudent(Group group, string name);
+        Faculty AddFaculty(char letter, string name);
 
         Student GetStudent(int id);
         Student FindStudent(string name);
