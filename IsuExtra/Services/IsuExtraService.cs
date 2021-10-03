@@ -22,7 +22,7 @@ namespace IsuExtra.Services
 
         public IIsuService IsuService { get; }
         public ITimeTablesService TimeTablesService { get; }
-        public IReadOnlyList<JGTA> ExtraGroups { get; }
+        public IReadOnlyList<JGTA> ExtraGroups { get => _extraGroups; }
 
         public JGTA AddJGTA(Faculty faculty, string name)
         {
@@ -33,7 +33,7 @@ namespace IsuExtra.Services
 
         public void AddStudentToJGTAStream(Student student, JGTAStream stream)
         {
-            if (_numberOfStudentJGTA[student] >= _maxNumberOfJGTA)
+            if (_numberOfStudentJGTA.ContainsKey(student) && _numberOfStudentJGTA[student] >= _maxNumberOfJGTA)
             {
                 throw new IsuExtraException($"Error: unable to add student with id {student.Id} to more than {_maxNumberOfJGTA} JGTA");
             }

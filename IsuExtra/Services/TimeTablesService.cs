@@ -40,13 +40,13 @@ namespace IsuExtra.Services
 
         public void CheckStudentAndJGTAStreamCompatibility(Student student, JGTAStream stream, IReadOnlyList<JGTA> allExtraGroups)
         {
-            IReadOnlyList<Lesson> studentGroupTimeTable = _groupTimeTables.Find(groupTimeTable => groupTimeTable.Group == student.Group).TimeTable;
+            IReadOnlyList<Lesson> studentGroupTimeTable = _groupTimeTables.Find(groupTimeTable => groupTimeTable.Group == student.Group)?.TimeTable;
             if (studentGroupTimeTable == null)
             {
                 throw new IsuExtraException($"Error: group with name {student.Group.Name} has no timetable");
             }
 
-            IReadOnlyList<Lesson> streamTimeTable = _streamTimeTables.Find(streamTimeTable => streamTimeTable.JGTAStream == stream).TimeTable;
+            IReadOnlyList<Lesson> streamTimeTable = _streamTimeTables.Find(streamTimeTable => streamTimeTable.JGTAStream == stream)?.TimeTable;
             if (studentGroupTimeTable == null)
             {
                 throw new IsuExtraException($"Error: stream {stream} has no timetable");
@@ -103,10 +103,8 @@ namespace IsuExtra.Services
                 return true;
             }
 
-            return (lesson1.DayOfWeekTimePeriod.StartTime > lesson2.DayOfWeekTimePeriod.StartTime &&
-                lesson1.DayOfWeekTimePeriod.StartTime < lesson2.DayOfWeekTimePeriod.FinishTime) ||
-                (lesson2.DayOfWeekTimePeriod.StartTime > lesson1.DayOfWeekTimePeriod.StartTime &&
-                lesson2.DayOfWeekTimePeriod.StartTime < lesson1.DayOfWeekTimePeriod.FinishTime);
+            return lesson1.DayOfWeekTimePeriod.StartTime > lesson2.DayOfWeekTimePeriod.FinishTime ||
+                lesson2.DayOfWeekTimePeriod.StartTime > lesson1.DayOfWeekTimePeriod.FinishTime;
         }
     }
 }
