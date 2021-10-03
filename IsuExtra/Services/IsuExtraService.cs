@@ -61,7 +61,7 @@ namespace IsuExtra.Services
                 }
             }
 
-            if (stream.FreePlacesNumber < 0)
+            if (stream.FreePlacesNumber <= 0)
             {
                 throw new IsuExtraException($"Error: not enough places on stream {stream}");
             }
