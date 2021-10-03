@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Isu.Entities;
 using Isu.Services;
 using IsuExtra.Entities;
@@ -11,14 +12,14 @@ namespace IsuExtra.Tests
     public class Tests
     {
         [Test]
-        [TestCase('M', "ФИТИП", "Функциональный анализ и математическая логика")]
-        public void AddJGTA_JGTAAdded(char facultyLetter, string facultyName, string extraGroupName)
+        [TestCase('M', "Fitip", "Functional analysis and mathematics logic")]
+        public void AddJgta_JgtaAdded(char facultyLetter, string facultyName, string extraGroupName)
         {
             var isuService = new IsuService();
             var isuExtraService = new IsuExtraService(isuService);
             var faculty = new Faculty(facultyLetter, facultyName);
-            JGTA extraGroup = isuExtraService.AddJGTA(faculty, extraGroupName);
-            var extraGroups = new List<JGTA>(isuExtraService.ExtraGroups);
+            Jgta extraGroup = isuExtraService.AddJgta(faculty, extraGroupName);
+            var extraGroups = new List<Jgta>(isuExtraService.ExtraGroups);
             if (!extraGroups.Contains(extraGroup))
             {
                 Assert.Fail();
@@ -26,12 +27,12 @@ namespace IsuExtra.Tests
         }
 
         [Test]
-        public void AddStudentToJGTAStream_StudentAdded()
+        public void AddStudentToJgtaStream_StudentAdded()
         {
             var isuService = new IsuService();
             var isuExtraService = new IsuExtraService(isuService);
-            var faculty1 = isuService.AddFaculty('M', "ФИТИП");
-            isuService.AddFaculty('R', "СУиР");
+            var faculty1 = isuService.AddFaculty('M', "Fitip");
+            isuService.AddFaculty('R', "Suir");
             var group = isuService.AddGroup("R3225");
             var groupTimeTable = new List<Lesson>();
             groupTimeTable.Add(new Lesson(
@@ -43,8 +44,8 @@ namespace IsuExtra.Tests
                 ));
             isuExtraService.TimeTablesService.AddGroupTimeTable(group, groupTimeTable);
             var student = isuService.AddStudent(group, "name");
-            JGTA extraGroup = isuExtraService.AddJGTA(faculty1, "Функциональный анализ и математическая логика");
-            JGTAStream stream = extraGroup.AddStream(25);
+            Jgta extraGroup = isuExtraService.AddJgta(faculty1, "Functional analysis and mathematics logic");
+            JgtaStream stream = extraGroup.AddStream(25);
             var streamTimeTable = new List<Lesson>();
             streamTimeTable.Add(new Lesson(
                 new Teacher("teacher"),
@@ -53,8 +54,8 @@ namespace IsuExtra.Tests
                     new Time(11, 00),
                     new Time(12, 30))
                 ));
-            isuExtraService.TimeTablesService.AddJGTAStreamTimeTable(stream, streamTimeTable);
-            isuExtraService.AddStudentToJGTAStream(student, stream);
+            isuExtraService.TimeTablesService.AddJgtaStreamTimeTable(stream, streamTimeTable);
+            isuExtraService.AddStudentToJgtaStream(student, stream);
             var students = new List<Student>(stream.Students);
             if (!students.Contains(student))
             {
@@ -63,14 +64,14 @@ namespace IsuExtra.Tests
         }
 
         [Test]
-        public void AddStudentToJGTAStreamTimeTablesNotCompatible_ThrowException()
+        public void AddStudentToJgtaStreamTimeTablesNotCompatible_ThrowException()
         {
             Assert.Catch<IsuExtraException>(() =>
             {
                 var isuService = new IsuService();
                 var isuExtraService = new IsuExtraService(isuService);
-                var faculty1 = isuService.AddFaculty('M', "ФИТИП");
-                isuService.AddFaculty('R', "СУиР");
+                var faculty1 = isuService.AddFaculty('M', "Fitip");
+                isuService.AddFaculty('R', "Suir");
                 var group = isuService.AddGroup("R3225");
                 var groupTimeTable = new List<Lesson>();
                 groupTimeTable.Add(new Lesson(
@@ -82,8 +83,8 @@ namespace IsuExtra.Tests
                     ));
                 isuExtraService.TimeTablesService.AddGroupTimeTable(group, groupTimeTable);
                 var student = isuService.AddStudent(group, "name");
-                JGTA extraGroup = isuExtraService.AddJGTA(faculty1, "Функциональный анализ и математическая логика");
-                JGTAStream stream = extraGroup.AddStream(25);
+                Jgta extraGroup = isuExtraService.AddJgta(faculty1, "Functional analysis and mathematics logic");
+                JgtaStream stream = extraGroup.AddStream(25);
                 var streamTimeTable = new List<Lesson>();
                 streamTimeTable.Add(new Lesson(
                     new Teacher("teacher"),
@@ -92,8 +93,8 @@ namespace IsuExtra.Tests
                         new Time(11, 00),
                         new Time(12, 30))
                     ));
-                isuExtraService.TimeTablesService.AddJGTAStreamTimeTable(stream, streamTimeTable);
-                isuExtraService.AddStudentToJGTAStream(student, stream);
+                isuExtraService.TimeTablesService.AddJgtaStreamTimeTable(stream, streamTimeTable);
+                isuExtraService.AddStudentToJgtaStream(student, stream);
              });
         }
 
@@ -104,8 +105,8 @@ namespace IsuExtra.Tests
             {
                 var isuService = new IsuService();
                 var isuExtraService = new IsuExtraService(isuService);
-                var faculty1 = isuService.AddFaculty('M', "ФИТИП");
-                var faculty2 = isuService.AddFaculty('R', "СУиР");
+                var faculty1 = isuService.AddFaculty('M', "Fitip");
+                var faculty2 = isuService.AddFaculty('R', "Suir");
                 var faculty3 = isuService.AddFaculty('X', "Some faculty");
                 var group = isuService.AddGroup("M3200");
                 var groupTimeTable = new List<Lesson>();
@@ -118,8 +119,8 @@ namespace IsuExtra.Tests
                     ));
                 isuExtraService.TimeTablesService.AddGroupTimeTable(group, groupTimeTable);
                 
-                JGTA extraGroup1 = isuExtraService.AddJGTA(faculty1, "Функциональный анализ и математическая логика");
-                JGTAStream stream1 = extraGroup1.AddStream(25);
+                Jgta extraGroup1 = isuExtraService.AddJgta(faculty1, "Functional analysis and mathematics logic");
+                JgtaStream stream1 = extraGroup1.AddStream(25);
                 var stream1TimeTable = new List<Lesson>();
                 stream1TimeTable.Add(new Lesson(
                     new Teacher("teacher"),
@@ -128,10 +129,10 @@ namespace IsuExtra.Tests
                         new Time(11, 00),
                         new Time(12, 30))
                     ));
-                isuExtraService.TimeTablesService.AddJGTAStreamTimeTable(stream1, stream1TimeTable);
+                isuExtraService.TimeTablesService.AddJgtaStreamTimeTable(stream1, stream1TimeTable);
                 
-                JGTA extraGroup2 = isuExtraService.AddJGTA(faculty2, "something");
-                JGTAStream stream2 = extraGroup2.AddStream(25);
+                Jgta extraGroup2 = isuExtraService.AddJgta(faculty2, "something");
+                JgtaStream stream2 = extraGroup2.AddStream(25);
                 var stream2TimeTable = new List<Lesson>();
                 stream2TimeTable.Add(new Lesson(
                     new Teacher("teacher"),
@@ -140,10 +141,10 @@ namespace IsuExtra.Tests
                         new Time(11, 00),
                         new Time(12, 30))
                     ));
-                isuExtraService.TimeTablesService.AddJGTAStreamTimeTable(stream2, stream2TimeTable);
+                isuExtraService.TimeTablesService.AddJgtaStreamTimeTable(stream2, stream2TimeTable);
                 
-                JGTA extraGroup3 = isuExtraService.AddJGTA(faculty3, "something");
-                JGTAStream stream3 = extraGroup3.AddStream(25);
+                Jgta extraGroup3 = isuExtraService.AddJgta(faculty3, "something");
+                JgtaStream stream3 = extraGroup3.AddStream(25);
                 var stream3TimeTable = new List<Lesson>();
                 stream3TimeTable.Add(new Lesson(
                     new Teacher("teacher"),
@@ -152,12 +153,12 @@ namespace IsuExtra.Tests
                         new Time(11, 00),
                         new Time(12, 30))
                     ));
-                isuExtraService.TimeTablesService.AddJGTAStreamTimeTable(stream3, stream3TimeTable);
+                isuExtraService.TimeTablesService.AddJgtaStreamTimeTable(stream3, stream3TimeTable);
 
                 var student = isuService.AddStudent(group, "name");
-                isuExtraService.AddStudentToJGTAStream(student, stream1);
-                isuExtraService.AddStudentToJGTAStream(student, stream2);
-                isuExtraService.AddStudentToJGTAStream(student, stream3);
+                isuExtraService.AddStudentToJgtaStream(student, stream1);
+                isuExtraService.AddStudentToJgtaStream(student, stream2);
+                isuExtraService.AddStudentToJgtaStream(student, stream3);
             });
         }
 
@@ -168,7 +169,7 @@ namespace IsuExtra.Tests
            {
                var isuService = new IsuService();
                var isuExtraService = new IsuExtraService(isuService);
-               var faculty1 = isuService.AddFaculty('M', "ФИТИП");
+               var faculty1 = isuService.AddFaculty('M', "Fitip");
                var group = isuService.AddGroup("M3200");
                var groupTimeTable = new List<Lesson>();
                groupTimeTable.Add(new Lesson(
@@ -180,8 +181,8 @@ namespace IsuExtra.Tests
                    ));
                isuExtraService.TimeTablesService.AddGroupTimeTable(group, groupTimeTable);
                var student = isuService.AddStudent(group, "name");
-               JGTA extraGroup = isuExtraService.AddJGTA(faculty1, "Функциональный анализ и математическая логика");
-               JGTAStream stream = extraGroup.AddStream(25);
+               Jgta extraGroup = isuExtraService.AddJgta(faculty1, "Functional analysis and mathematics logic");
+               JgtaStream stream = extraGroup.AddStream(25);
                var streamTimeTable = new List<Lesson>();
                streamTimeTable.Add(new Lesson(
                    new Teacher("teacher"),
@@ -190,20 +191,20 @@ namespace IsuExtra.Tests
                        new Time(11, 00),
                        new Time(12, 30))
                    ));
-               isuExtraService.TimeTablesService.AddJGTAStreamTimeTable(stream, streamTimeTable);
-               isuExtraService.AddStudentToJGTAStream(student, stream);
+               isuExtraService.TimeTablesService.AddJgtaStreamTimeTable(stream, streamTimeTable);
+               isuExtraService.AddStudentToJgtaStream(student, stream);
            });
         }
 
         [Test]
-        public void AddStudentToOneJGTATwice_ThrowException()
+        public void AddStudentToOneJgtaTwice_ThrowException()
         {
             Assert.Catch<IsuExtraException>(() =>
             {
             var isuService = new IsuService();
             var isuExtraService = new IsuExtraService(isuService);
-            var faculty1 = isuService.AddFaculty('M', "ФИТИП");
-            isuService.AddFaculty('R', "СУиР");
+            var faculty1 = isuService.AddFaculty('M', "Fitip");
+            isuService.AddFaculty('R', "Suir");
             var group = isuService.AddGroup("R3225");
             var groupTimeTable = new List<Lesson>();
             groupTimeTable.Add(new Lesson(
@@ -215,8 +216,8 @@ namespace IsuExtra.Tests
                 ));
             isuExtraService.TimeTablesService.AddGroupTimeTable(group, groupTimeTable);
             var student = isuService.AddStudent(group, "name");
-            JGTA extraGroup = isuExtraService.AddJGTA(faculty1, "Функциональный анализ и математическая логика");
-            JGTAStream stream1 = extraGroup.AddStream(25);
+            Jgta extraGroup = isuExtraService.AddJgta(faculty1, "Functional analysis and mathematics logic");
+            JgtaStream stream1 = extraGroup.AddStream(25);
             var stream1TimeTable = new List<Lesson>();
             stream1TimeTable.Add(new Lesson(
                 new Teacher("teacher"),
@@ -225,9 +226,9 @@ namespace IsuExtra.Tests
                     new Time(11, 00),
                     new Time(12, 30))
                 ));
-            isuExtraService.TimeTablesService.AddJGTAStreamTimeTable(stream1, stream1TimeTable);
+            isuExtraService.TimeTablesService.AddJgtaStreamTimeTable(stream1, stream1TimeTable);
 
-            JGTAStream stream2 = extraGroup.AddStream(20);
+            JgtaStream stream2 = extraGroup.AddStream(20);
             var stream2TimeTable = new List<Lesson>();
             stream2TimeTable.Add(new Lesson(
                 new Teacher("teacher"),
@@ -236,9 +237,9 @@ namespace IsuExtra.Tests
                     new Time(11, 00),
                     new Time(12, 30))
                 ));
-            isuExtraService.TimeTablesService.AddJGTAStreamTimeTable(stream2, stream2TimeTable);
-            isuExtraService.AddStudentToJGTAStream(student, stream1);
-            isuExtraService.AddStudentToJGTAStream(student, stream2);
+            isuExtraService.TimeTablesService.AddJgtaStreamTimeTable(stream2, stream2TimeTable);
+            isuExtraService.AddStudentToJgtaStream(student, stream1);
+            isuExtraService.AddStudentToJgtaStream(student, stream2);
             });
         }
 
@@ -247,8 +248,8 @@ namespace IsuExtra.Tests
         {
             var isuService = new IsuService();
             var isuExtraService = new IsuExtraService(isuService);
-            var faculty1 = isuService.AddFaculty('M', "ФИТИП");
-            isuService.AddFaculty('R', "СУиР");
+            var faculty1 = isuService.AddFaculty('M', "Fitip");
+            isuService.AddFaculty('R', "Suir");
             var group = isuService.AddGroup("R3225");
             var groupTimeTable = new List<Lesson>();
             groupTimeTable.Add(new Lesson(
@@ -260,8 +261,8 @@ namespace IsuExtra.Tests
                 ));
             isuExtraService.TimeTablesService.AddGroupTimeTable(group, groupTimeTable);
             var student = isuService.AddStudent(group, "name");
-            JGTA extraGroup = isuExtraService.AddJGTA(faculty1, "Функциональный анализ и математическая логика");
-            JGTAStream stream = extraGroup.AddStream(25);
+            Jgta extraGroup = isuExtraService.AddJgta(faculty1, "Functional analysis and mathematics logic");
+            JgtaStream stream = extraGroup.AddStream(25);
             var streamTimeTable = new List<Lesson>();
             streamTimeTable.Add(new Lesson(
                 new Teacher("teacher"),
@@ -270,9 +271,9 @@ namespace IsuExtra.Tests
                     new Time(11, 00),
                     new Time(12, 30))
                 ));
-            isuExtraService.TimeTablesService.AddJGTAStreamTimeTable(stream, streamTimeTable);
-            isuExtraService.AddStudentToJGTAStream(student, stream);
-            isuExtraService.RemoveStudentFromJGTAStream(student, stream);
+            isuExtraService.TimeTablesService.AddJgtaStreamTimeTable(stream, streamTimeTable);
+            isuExtraService.AddStudentToJgtaStream(student, stream);
+            isuExtraService.RemoveStudentFromJgtaStream(student, stream);
             var students = new List<Student>(stream.Students);
             if (students.Contains(student))
             {

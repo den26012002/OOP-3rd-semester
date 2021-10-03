@@ -4,12 +4,12 @@ using IsuExtra.Tools;
 
 namespace IsuExtra.Entities
 {
-    public class JGTAStream
+    public class JgtaStream
     {
         private int _maxNumberOfStudnents;
         private List<Student> _students;
 
-        internal JGTAStream(Faculty faculty, int maxNumberOfStudents)
+        internal JgtaStream(Faculty faculty, int maxNumberOfStudents)
         {
             Faculty = faculty;
             _maxNumberOfStudnents = maxNumberOfStudents;
@@ -18,7 +18,7 @@ namespace IsuExtra.Entities
 
         public Faculty Faculty { get; }
         public int FreePlacesNumber { get => _maxNumberOfStudnents - _students.Count; }
-        public IReadOnlyList<Student> Students { get => _students; }
+        public IReadOnlyList<Student> Students => _students;
 
         internal void AddStudent(Student student)
         {

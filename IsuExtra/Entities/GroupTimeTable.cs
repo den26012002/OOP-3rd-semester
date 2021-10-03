@@ -13,6 +13,6 @@ namespace IsuExtra.Entities
         }
 
         public Group Group { get; }
-        public IReadOnlyList<Lesson> TimeTable { get => _timeTable; }
+        public IReadOnlyList<Lesson> TimeTable => _timeTable;
     }
 }

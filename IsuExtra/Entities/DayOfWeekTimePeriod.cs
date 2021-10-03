@@ -1,4 +1,6 @@
-﻿namespace IsuExtra.Entities
+﻿using System;
+
+namespace IsuExtra.Entities
 {
     public class DayOfWeekTimePeriod
     {

@@ -8,15 +8,15 @@ namespace IsuExtra.Services
     public class TimeTablesService : ITimeTablesService
     {
         private List<GroupTimeTable> _groupTimeTables;
-        private List<JGTAStreamTimeTable> _streamTimeTables;
+        private List<JgtaStreamTimeTable> _streamTimeTables;
         internal TimeTablesService()
         {
             _groupTimeTables = new List<GroupTimeTable>();
-            _streamTimeTables = new List<JGTAStreamTimeTable>();
+            _streamTimeTables = new List<JgtaStreamTimeTable>();
         }
 
-        public IReadOnlyList<GroupTimeTable> GroupTimeTables { get => _groupTimeTables; }
-        public IReadOnlyList<JGTAStreamTimeTable> StreamTimeTables { get => _streamTimeTables; }
+        public IReadOnlyList<GroupTimeTable> GroupTimeTables => _groupTimeTables;
+        public IReadOnlyList<JgtaStreamTimeTable> StreamTimeTables => _streamTimeTables;
 
         public void AddGroupTimeTable(Group group, List<Lesson> groupTimeTable)
         {
@@ -28,17 +28,17 @@ namespace IsuExtra.Services
             _groupTimeTables.Add(new GroupTimeTable(group, groupTimeTable));
         }
 
-        public void AddJGTAStreamTimeTable(JGTAStream stream, List<Lesson> timeTable)
+        public void AddJgtaStreamTimeTable(JgtaStream stream, List<Lesson> timeTable)
         {
-            if (_streamTimeTables.Find(existingStreamTimeTable => existingStreamTimeTable.JGTAStream == stream) != null)
+            if (_streamTimeTables.Find(existingStreamTimeTable => existingStreamTimeTable.JgtaStream == stream) != null)
             {
                 throw new IsuExtraException($"Error: stream {stream} already has timetable");
             }
 
-            _streamTimeTables.Add(new JGTAStreamTimeTable(stream, timeTable));
+            _streamTimeTables.Add(new JgtaStreamTimeTable(stream, timeTable));
         }
 
-        public void CheckStudentAndJGTAStreamCompatibility(Student student, JGTAStream stream, IReadOnlyList<JGTA> allExtraGroups)
+        public void CheckStudentAndJgtaStreamCompatibility(Student student, JgtaStream stream, IReadOnlyList<Jgta> allExtraGroups)
         {
             IReadOnlyList<Lesson> studentGroupTimeTable = _groupTimeTables.Find(groupTimeTable => groupTimeTable.Group == student.Group)?.TimeTable;
             if (studentGroupTimeTable == null)
@@ -46,7 +46,7 @@ namespace IsuExtra.Services
                 throw new IsuExtraException($"Error: group with name {student.Group.Name} has no timetable");
             }
 
-            IReadOnlyList<Lesson> streamTimeTable = _streamTimeTables.Find(streamTimeTable => streamTimeTable.JGTAStream == stream)?.TimeTable;
+            IReadOnlyList<Lesson> streamTimeTable = _streamTimeTables.Find(streamTimeTable => streamTimeTable.JgtaStream == stream)?.TimeTable;
             if (studentGroupTimeTable == null)
             {
                 throw new IsuExtraException($"Error: stream {stream} has no timetable");
@@ -54,14 +54,14 @@ namespace IsuExtra.Services
 
             var studentStreamsTimeTables = new List<IReadOnlyList<Lesson>>();
 
-            foreach (JGTA extraGroup in allExtraGroups)
+            foreach (Jgta extraGroup in allExtraGroups)
             {
-                foreach (JGTAStream existingStream in extraGroup.Streams)
+                foreach (JgtaStream existingStream in extraGroup.Streams)
                 {
                     var students = new List<Student>(existingStream.Students);
                     if (students.Contains(student))
                     {
-                        studentStreamsTimeTables.Add(_streamTimeTables.Find(streamTimeTable => streamTimeTable.JGTAStream == existingStream).TimeTable);
+                        studentStreamsTimeTables.Add(_streamTimeTables.Find(streamTimeTable => streamTimeTable.JgtaStream == existingStream).TimeTable);
                     }
                 }
             }

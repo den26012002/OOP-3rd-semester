@@ -3,24 +3,24 @@ using Isu.Entities;
 
 namespace IsuExtra.Entities
 {
-    public class JGTA // joint group of training areas
+    public class Jgta // joint group of training areas
     {
-        private List<JGTAStream> _streams;
+        private List<JgtaStream> _streams;
 
-        internal JGTA(Faculty faculty, string name)
+        internal Jgta(Faculty faculty, string name)
         {
             Faculty = faculty;
             Name = name;
-            _streams = new List<JGTAStream>();
+            _streams = new List<JgtaStream>();
         }
 
         public Faculty Faculty { get; }
         public string Name { get; }
-        public IReadOnlyList<JGTAStream> Streams { get => _streams; }
+        public IReadOnlyList<JgtaStream> Streams => _streams;
 
-        public JGTAStream AddStream(int maxNumberOfStudents)
+        public JgtaStream AddStream(int maxNumberOfStudents)
         {
-            var newStream = new JGTAStream(Faculty, maxNumberOfStudents);
+            var newStream = new JgtaStream(Faculty, maxNumberOfStudents);
             _streams.Add(newStream);
             return newStream;
         }

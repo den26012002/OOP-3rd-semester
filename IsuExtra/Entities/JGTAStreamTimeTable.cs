@@ -2,17 +2,17 @@
 
 namespace IsuExtra.Entities
 {
-    public class JGTAStreamTimeTable
+    public class JgtaStreamTimeTable
     {
         private List<Lesson> _timeTable;
 
-        internal JGTAStreamTimeTable(JGTAStream stream, List<Lesson> timeTable)
+        internal JgtaStreamTimeTable(JgtaStream stream, List<Lesson> timeTable)
         {
-            JGTAStream = stream;
+            JgtaStream = stream;
             _timeTable = timeTable;
         }
 
-        public JGTAStream JGTAStream { get; }
+        public JgtaStream JgtaStream { get; }
         public IReadOnlyList<Lesson> TimeTable { get => _timeTable; }
     }
 }

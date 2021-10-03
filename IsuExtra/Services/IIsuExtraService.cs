@@ -7,20 +7,20 @@ namespace IsuExtra.Services
 {
     public interface IIsuExtraService
     {
-        public IIsuService IsuService { get; }
-        public ITimeTablesService TimeTablesService { get; }
-        public IReadOnlyList<JGTA> ExtraGroups { get; }
+        IIsuService IsuService { get; }
+        ITimeTablesService TimeTablesService { get; }
+        IReadOnlyList<Jgta> ExtraGroups { get; }
 
-        public JGTA AddJGTA(Faculty faculty, string name);
+        Jgta AddJgta(Faculty faculty, string name);
 
-        public void AddStudentToJGTAStream(Student student, JGTAStream stream);
+        void AddStudentToJgtaStream(Student student, JgtaStream stream);
 
-        public void RemoveStudentFromJGTAStream(Student student, JGTAStream stream);
+        void RemoveStudentFromJgtaStream(Student student, JgtaStream stream);
 
-        public IReadOnlyList<JGTAStream> GetJGTAStreams(JGTA extraGroup);
+        IReadOnlyList<JgtaStream> GetJgtaStreams(Jgta extraGroup);
 
-        public IReadOnlyList<Student> GetStudentsOnStream(JGTAStream stream);
+        IReadOnlyList<Student> GetStudentsOnStream(JgtaStream stream);
 
-        public List<Student> GetNotSighUpStudents(Group group);
+        List<Student> GetNotSighUpStudents(Group group);
     }
 }

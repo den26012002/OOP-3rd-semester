@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Isu.Entities;
 using Isu.Services;
 using IsuExtra.Entities;
@@ -8,94 +9,80 @@ namespace IsuExtra.Services
 {
     public class IsuExtraService : IIsuExtraService
     {
-        private readonly uint _maxNumberOfJGTA = 2;
-        private List<JGTA> _extraGroups;
-        private Dictionary<Student, uint> _numberOfStudentJGTA;
+        private readonly uint _maxNumberOfJgta = 2;
+        private List<Jgta> _extraGroups;
+        private JgtaCounter _jgtaCounter;
 
         public IsuExtraService(IIsuService isuService)
         {
             IsuService = isuService;
-            _extraGroups = new List<JGTA>();
+            _extraGroups = new List<Jgta>();
             TimeTablesService = new TimeTablesService();
-            _numberOfStudentJGTA = new Dictionary<Student, uint>();
+            _jgtaCounter = new JgtaCounter(_maxNumberOfJgta);
         }
 
         public IIsuService IsuService { get; }
         public ITimeTablesService TimeTablesService { get; }
-        public IReadOnlyList<JGTA> ExtraGroups { get => _extraGroups; }
+        public IReadOnlyList<Jgta> ExtraGroups => _extraGroups;
 
-        public JGTA AddJGTA(Faculty faculty, string name)
+        public Jgta AddJgta(Faculty faculty, string name)
         {
-            var newExtraGroup = new JGTA(faculty, name);
+            var newExtraGroup = new Jgta(faculty, name);
             _extraGroups.Add(newExtraGroup);
             return newExtraGroup;
         }
 
-        public void AddStudentToJGTAStream(Student student, JGTAStream stream)
+        public void AddStudentToJgtaStream(Student student, JgtaStream stream)
         {
-            if (_numberOfStudentJGTA.ContainsKey(student) && _numberOfStudentJGTA[student] >= _maxNumberOfJGTA)
+            if (_jgtaCounter.GetNumberOfStudentJgta(student) >= _maxNumberOfJgta)
             {
-                throw new IsuExtraException($"Error: unable to add student with id {student.Id} to more than {_maxNumberOfJGTA} JGTA");
+                throw new IsuExtraException($"Error: unable to add student with id {student.Id} to more than {_maxNumberOfJgta} Jgta");
             }
 
             var faculties = new List<Faculty>(IsuService.Faculties);
             if (faculties.Find(faculty => faculty.Letter == student.Group.FacultyLetter).Name == stream.Faculty.Name)
             {
-                throw new IsuExtraException($"Error: unable to add student with id {student.Id} to his faculty's JGTA");
+                throw new IsuExtraException($"Error: unable to add student with id {student.Id} to his faculty's Jgta");
             }
 
-            JGTA extraGroup = null;
-            foreach (JGTA existingExtraGroup in _extraGroups)
-            {
-                var streams = new List<JGTAStream>(existingExtraGroup.Streams);
-                if (streams.Contains(stream))
-                {
-                    extraGroup = existingExtraGroup;
-                    break;
-                }
-            }
+            Jgta extraGroup = _extraGroups.FirstOrDefault(existingExtraGroup => existingExtraGroup.Streams.Contains(stream));
 
             if (extraGroup == null)
             {
                 throw new IsuExtraException("Error: stream is not exist");
             }
 
-            foreach (JGTAStream existingStream in extraGroup.Streams)
+            foreach (JgtaStream existingStream in extraGroup.Streams)
             {
                 var students = new List<Student>(existingStream.Students);
                 if (students.Contains(student))
                 {
-                    throw new IsuExtraException($"Error: unable to add student with id {student.Id} to JGTA twice");
+                    throw new IsuExtraException($"Error: unable to add student with id {student.Id} to Jgta twice");
                 }
             }
 
-            if (stream.FreePlacesNumber > 0)
+            if (stream.FreePlacesNumber < 0)
             {
-                TimeTablesService.CheckStudentAndJGTAStreamCompatibility(student, stream, ExtraGroups);
-                stream.AddStudent(student);
-                if (!_numberOfStudentJGTA.ContainsKey(student))
-                {
-                    _numberOfStudentJGTA[student] = 1;
-                }
-                else
-                {
-                    ++_numberOfStudentJGTA[student];
-                }
+                throw new IsuExtraException($"Error: not enough places on stream {stream}");
             }
+
+            TimeTablesService.CheckStudentAndJgtaStreamCompatibility(student, stream, ExtraGroups);
+            stream.AddStudent(student);
+            _jgtaCounter.AddStudent(student);
         }
 
-        public void RemoveStudentFromJGTAStream(Student student, JGTAStream stream)
+        public void RemoveStudentFromJgtaStream(Student student, JgtaStream stream)
         {
             stream.RemoveStudent(student);
-            --_numberOfStudentJGTA[student];
+            _jgtaCounter.RemoveStudent(student);
         }
 
-        public IReadOnlyList<JGTAStream> GetJGTAStreams(JGTA extraGroup)
+        public IReadOnlyList<JgtaStream> GetJgtaStreams(Jgta extraGroup)
         {
             return extraGroup.Streams;
         }
 
-        public IReadOnlyList<Student> GetStudentsOnStream(JGTAStream stream)
+        public IReadOnlyList<Student> GetStudentsOnStream(JgtaStream stream)
         {
             return stream.Students;
         }
@@ -105,20 +92,7 @@ namespace IsuExtra.Services
             var notSignUpStudents = new List<Student>();
             foreach (Student student in group.Students)
             {
-                bool isSignUp = false;
-                foreach (JGTA extraGroup in _extraGroups)
-                {
-                    foreach (JGTAStream stream in extraGroup.Streams)
-                    {
-                        var students = new List<Student>(stream.Students);
-                        if (students.Contains(student))
-                        {
-                            isSignUp = true;
-                        }
-                    }
-                }
-
-                if (!isSignUp)
+                if (_jgtaCounter.GetNumberOfStudentJgta(student) == 0)
                 {
                     notSignUpStudents.Add(student);
                 }

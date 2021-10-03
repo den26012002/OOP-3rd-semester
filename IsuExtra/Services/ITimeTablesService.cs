@@ -6,12 +6,12 @@ namespace IsuExtra.Services
 {
     public interface ITimeTablesService
     {
-        public IReadOnlyList<GroupTimeTable> GroupTimeTables { get; }
-        public IReadOnlyList<JGTAStreamTimeTable> StreamTimeTables { get; }
-        public void AddGroupTimeTable(Group group, List<Lesson> groupTimeTable);
+        IReadOnlyList<GroupTimeTable> GroupTimeTables { get; }
+        IReadOnlyList<JgtaStreamTimeTable> StreamTimeTables { get; }
+        void AddGroupTimeTable(Group group, List<Lesson> groupTimeTable);
 
-        public void AddJGTAStreamTimeTable(JGTAStream stream, List<Lesson> timeTable);
+        void AddJgtaStreamTimeTable(JgtaStream stream, List<Lesson> timeTable);
 
-        public void CheckStudentAndJGTAStreamCompatibility(Student student, JGTAStream stream, IReadOnlyList<JGTA> allExtraGroups);
+        void CheckStudentAndJgtaStreamCompatibility(Student student, JgtaStream stream, IReadOnlyList<Jgta> allExtraGroups);
     }
 }
