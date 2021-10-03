@@ -7,13 +7,15 @@ namespace IsuExtra.Entities
     {
         private List<JGTAStream> _streams;
 
-        internal JGTA(Faculty faculty)
+        internal JGTA(Faculty faculty, string name)
         {
             Faculty = faculty;
+            Name = name;
             _streams = new List<JGTAStream>();
         }
 
         public Faculty Faculty { get; }
+        public string Name { get; }
         public IReadOnlyList<JGTAStream> Streams { get => _streams; }
 
         public JGTAStream AddStream(int maxNumberOfStudents)

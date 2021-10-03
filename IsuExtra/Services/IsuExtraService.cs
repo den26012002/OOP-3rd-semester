@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Isu.Entities;
+using Isu.Services;
 using IsuExtra.Entities;
 using IsuExtra.Tools;
 
@@ -11,19 +12,21 @@ namespace IsuExtra.Services
         private List<JGTA> _extraGroups;
         private Dictionary<Student, uint> _numberOfStudentJGTA;
 
-        public IsuExtraService()
+        public IsuExtraService(IIsuService isuService)
         {
+            IsuService = isuService;
             _extraGroups = new List<JGTA>();
             TimeTablesService = new TimeTablesService();
             _numberOfStudentJGTA = new Dictionary<Student, uint>();
         }
 
+        public IIsuService IsuService { get; }
         public ITimeTablesService TimeTablesService { get; }
         public IReadOnlyList<JGTA> ExtraGroups { get; }
 
-        public JGTA AddJGTA(Faculty faculty)
+        public JGTA AddJGTA(Faculty faculty, string name)
         {
-            var newExtraGroup = new JGTA(faculty);
+            var newExtraGroup = new JGTA(faculty, name);
             _extraGroups.Add(newExtraGroup);
             return newExtraGroup;
         }
@@ -33,6 +36,12 @@ namespace IsuExtra.Services
             if (_numberOfStudentJGTA[student] >= _maxNumberOfJGTA)
             {
                 throw new IsuExtraException($"Error: unable to add student with id {student.Id} to more than {_maxNumberOfJGTA} JGTA");
+            }
+
+            var faculties = new List<Faculty>(IsuService.Faculties);
+            if (faculties.Find(faculty => faculty.Letter == student.Group.FacultyLetter).Name == stream.Faculty.Name)
+            {
+                throw new IsuExtraException($"Error: unable to add student with id {student.Id} to his faculty's JGTA");
             }
 
             JGTA extraGroup = null;
