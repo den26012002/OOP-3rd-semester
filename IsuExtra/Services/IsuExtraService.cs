@@ -5,7 +5,7 @@ using IsuExtra.Tools;
 
 namespace IsuExtra.Services
 {
-    public class IsuExtraService
+    public class IsuExtraService : IIsuExtraService
     {
         private readonly uint _maxNumberOfJGTA = 2;
         private List<JGTA> _extraGroups;
@@ -15,9 +15,10 @@ namespace IsuExtra.Services
         {
             _extraGroups = new List<JGTA>();
             TimeTablesService = new TimeTablesService();
+            _numberOfStudentJGTA = new Dictionary<Student, uint>();
         }
 
-        public TimeTablesService TimeTablesService { get; }
+        public ITimeTablesService TimeTablesService { get; }
         public IReadOnlyList<JGTA> ExtraGroups { get; }
 
         public JGTA AddJGTA(Faculty faculty)
@@ -63,7 +64,14 @@ namespace IsuExtra.Services
             {
                 TimeTablesService.CheckStudentAndJGTAStreamCompatibility(student, stream, ExtraGroups);
                 stream.AddStudent(student);
-                ++_numberOfStudentJGTA[student];
+                if (!_numberOfStudentJGTA.ContainsKey(student))
+                {
+                    _numberOfStudentJGTA[student] = 1;
+                }
+                else
+                {
+                    ++_numberOfStudentJGTA[student];
+                }
             }
         }
 

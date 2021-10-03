@@ -5,7 +5,7 @@ using IsuExtra.Tools;
 
 namespace IsuExtra.Services
 {
-    public class TimeTablesService
+    public class TimeTablesService : ITimeTablesService
     {
         private List<GroupTimeTable> _groupTimeTables;
         private List<JGTAStreamTimeTable> _streamTimeTables;
@@ -14,6 +14,9 @@ namespace IsuExtra.Services
             _groupTimeTables = new List<GroupTimeTable>();
             _streamTimeTables = new List<JGTAStreamTimeTable>();
         }
+
+        public IReadOnlyList<GroupTimeTable> GroupTimeTables { get => _groupTimeTables; }
+        public IReadOnlyList<JGTAStreamTimeTable> StreamTimeTables { get => _streamTimeTables; }
 
         public void AddGroupTimeTable(Group group, List<Lesson> groupTimeTable)
         {
