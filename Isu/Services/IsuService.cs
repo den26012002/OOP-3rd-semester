@@ -7,17 +7,26 @@ namespace Isu.Services
     public class IsuService : IIsuService
     {
         private int _nextId = 0;
+        private List<Group> _groups;
+        private List<Faculty> _faculties;
 
         public IsuService()
         {
-            Groups = new List<Group>();
+            _groups = new List<Group>();
+            _faculties = new List<Faculty>();
         }
 
-        public List<Group> Groups { get; }
+        public IReadOnlyList<Group> Groups { get => _groups; }
+        public IReadOnlyList<Faculty> Faculties { get => _faculties; }
         public Group AddGroup(string name)
         {
+            if (!IsValidFaculty(name[0]))
+            {
+                throw new IsuException("Error: incorrect letter of faculty");
+            }
+
             var newGroup = new Group(name);
-            Groups.Add(newGroup);
+            _groups.Add(newGroup);
             return newGroup;
         }
 
@@ -26,6 +35,13 @@ namespace Isu.Services
             var newStudent = new Student(name, _nextId++, group);
             group.AddStudent(newStudent);
             return newStudent;
+        }
+
+        public Faculty AddFaculty(char letter, string name)
+        {
+            var newFaculty = new Faculty(letter, name);
+            _faculties.Add(newFaculty);
+            return newFaculty;
         }
 
         public Student GetStudent(int id)
@@ -62,7 +78,7 @@ namespace Isu.Services
             {
                 if (group.Name == groupName)
                 {
-                    return group.Students;
+                    return new List<Student>(group.Students);
                 }
             }
 
@@ -114,6 +130,11 @@ namespace Isu.Services
         {
             FindGroup(student.Group.Name).RemoveStudent(student);
             newGroup.AddStudent(student);
+        }
+
+        private bool IsValidFaculty(char letter)
+        {
+            return _faculties.Find(faculty => faculty.Letter == letter) != null;
         }
     }
 }

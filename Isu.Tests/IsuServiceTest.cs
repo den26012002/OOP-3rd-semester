@@ -20,9 +20,10 @@ namespace Isu.Tests
         public void AddStudentToGroup_StudentHasGroupAndGroupContainsStudent()
         {
             var isuService = new IsuService();
+            isuService.AddFaculty('M', "Fitip");
             Group group = isuService.AddGroup("M3200");
             Student student = isuService.AddStudent(group, "Attaboy");
-            if (student.Group.Name != group.Name || !group.Students.Contains(student))
+            if (student.Group.Name != group.Name || group.FindStudent(student.Id) == null)
             {
                 Assert.Fail();
             }
@@ -56,11 +57,12 @@ namespace Isu.Tests
         public void TransferStudentToAnotherGroup_GroupChanged()
         {
             var isuService = new IsuService();
+            isuService.AddFaculty('M', "Fitip");
             Group group = isuService.AddGroup("M3200");
             Student student = isuService.AddStudent(group, "Debtor");
             Group newGroup = isuService.AddGroup("M3212");
             isuService.ChangeStudentGroup(student, newGroup);
-            if (student.Group.Name != newGroup.Name || !newGroup.Students.Contains(student))
+            if (student.Group.Name != newGroup.Name || newGroup.FindStudent(student.Id) == null)
             {
                 Assert.Fail();
             }

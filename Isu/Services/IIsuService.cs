@@ -5,8 +5,11 @@ namespace Isu.Services
 {
     public interface IIsuService
     {
+        public IReadOnlyList<Group> Groups { get; }
+        public IReadOnlyList<Faculty> Faculties { get; }
         Group AddGroup(string name);
         Student AddStudent(Group group, string name);
+        Faculty AddFaculty(char letter, string name);
 
         Student GetStudent(int id);
         Student FindStudent(string name);
