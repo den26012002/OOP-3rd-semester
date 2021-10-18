@@ -11,6 +11,8 @@ namespace Backups.Entities
             _memoryRestorePointDirectories = new List<MemoryRestorePointDirectory>();
         }
 
+        public IReadOnlyList<MemoryRestorePointDirectory> MemoryRestorePointDirectories => _memoryRestorePointDirectories;
+
         public void SaveRestorePoint(RestorePoint restorePoint)
         {
             _memoryRestorePointDirectories.Add(new MemoryRestorePointDirectory(restorePoint));
