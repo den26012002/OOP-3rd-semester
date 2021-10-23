@@ -1,6 +1,8 @@
-﻿namespace Backups.Entities
+﻿using System;
+
+namespace Backups.Entities
 {
-    public interface IJobObject
+    public interface IJobObject : IEquatable<IJobObject>
     {
         string Name { get; }
         string Extension { get; }

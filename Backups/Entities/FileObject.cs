@@ -20,6 +20,20 @@ namespace Backups.Entities
         public string DirectoryPath { get; }
         public string Name { get; }
         public string Extension { get; }
+
+        public bool Equals(IJobObject other)
+        {
+            if (other is FileObject file)
+            {
+                return file.Name == Name &&
+                    file.Extension == Extension &&
+                    file.DirectoryPath == DirectoryPath &&
+                    file.GetRepresentation() == GetRepresentation();
+            }
+
+            return false;
+        }
+
         public byte[] GetRepresentation()
         {
             FileStream ifstream = File.OpenRead(DirectoryPath + "\\" + Name + Extension);

@@ -21,6 +21,9 @@ namespace Backups.Entities
         }
 
         public string Name { get; }
+        public IReadOnlyList<IJobObject> CurrentObjects => _currentObjects;
+        public IStorageAlgorithm StorageAlgorithm => _storageAlgorithm;
+        public IRepository Repository => _repository;
         public List<RestorePointJobObjectsInfo> CreatedRestorePoints => _createdRestorePointsJobObjectsInfo;
 
         public void AddJobObject(IJobObject jobObject)

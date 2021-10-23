@@ -16,6 +16,9 @@ namespace Backups.Entities
             _storageNameGiver = storageNameGiver;
         }
 
+        public IArchiver Archiver => _archiver;
+        public IStorageNameGiver StorageNameGiver => _storageNameGiver;
+
         public void SaveRestorePoint(RestorePoint restorePoint)
         {
             var backupsDirectory = new DirectoryInfo(_backupsDirectoryPath);
