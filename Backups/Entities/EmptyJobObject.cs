@@ -1,4 +1,6 @@
-﻿namespace Backups.Entities
+﻿using System.Linq;
+
+namespace Backups.Entities
 {
     public class EmptyJobObject : IJobObject
     {
@@ -12,7 +14,7 @@
             {
                 return empty.Name == Name &&
                     empty.Extension == Extension &&
-                    empty.GetRepresentation() == GetRepresentation();
+                    Enumerable.SequenceEqual(empty.GetRepresentation(), GetRepresentation());
             }
 
             return false;

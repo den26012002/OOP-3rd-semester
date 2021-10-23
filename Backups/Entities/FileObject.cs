@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Linq;
 using Backups.Tools;
 
 namespace Backups.Entities
@@ -28,7 +29,7 @@ namespace Backups.Entities
                 return file.Name == Name &&
                     file.Extension == Extension &&
                     file.DirectoryPath == DirectoryPath &&
-                    file.GetRepresentation() == GetRepresentation();
+                    Enumerable.SequenceEqual(file.GetRepresentation(), GetRepresentation());
             }
 
             return false;

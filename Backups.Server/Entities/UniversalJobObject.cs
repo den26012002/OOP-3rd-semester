@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Linq;
+using System.Text;
 using Backups.Entities;
 
 namespace Backups.Server.Entities
@@ -24,7 +25,7 @@ namespace Backups.Server.Entities
             {
                 return universalObject.Name == Name &&
                     universalObject.Extension == Extension &&
-                    universalObject.GetRepresentation() == GetRepresentation();
+                    Enumerable.SequenceEqual(universalObject.GetRepresentation(), GetRepresentation());
             }
 
             return false;
