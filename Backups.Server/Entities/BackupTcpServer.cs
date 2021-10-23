@@ -81,18 +81,7 @@ namespace Backups.Server.Entities
         {
             string backupJobaName = configurationJsonElement.GetProperty("BackupJobaName").ToString();
             string algorithmName = configurationJsonElement.GetProperty("Algorithm").ToString();
-
-            // string repositoryName = configurationJsonElement.GetProperty("Repository").ToString();
-            // string archiverName = configurationJsonElement.GetProperty("Archiver").ToString();
-            // string storageNameGiverName = configurationJsonElement.GetProperty("StorageNameGiver").ToString();
             var backupsFactory = new BackupsFactory();
-            /* _backupJoba = new BackupJoba(
-                backupJobaName,
-                backupsFactory.GetAlgorithm(algorithmName),
-                new FileSystemRepository(
-                    _backupsDirectory + "\\" + backupJobaName,
-                    backupsFactory.GetArchiver(archiverName),
-                    backupsFactory.GetStorageNameGiver(storageNameGiverName)));*/
             _backupJoba = new BackupJoba(
                 backupJobaName,
                 backupsFactory.GetAlgorithm(algorithmName),

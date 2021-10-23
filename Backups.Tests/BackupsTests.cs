@@ -12,9 +12,6 @@ namespace Backups.Tests
             var memoryRepository = new MemoryRepository();
             var backupJoba = new BackupJoba("Backup", splitStorageAlgorithm, memoryRepository);
 
-            // need to have these files
-            // var file1 = new FileObject("D:", "experimental", ".txt");
-            // var file2 = new FileObject("D:", "strange", ".txt");
             var file1 = new EmptyJobObject();
             var file2 = new EmptyJobObject();
             backupJoba.AddJobObject(file1);
