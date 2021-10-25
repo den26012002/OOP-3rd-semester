@@ -1,0 +1,214 @@
+@startuml
+namespace Backups {
+    interface IRepository
+    {
+        +SaveRestorePoint(RestorePoint)
+    }
+
+    class BackupJoba
+    {
+        -currentObjects : IJobObject
+        -repository : IRepository
+        -storageAlgorithm : IStorageAlgorithm
+        +AddJobObject(IJobObject)
+        +RemoveJobObject(IJobObject)
+        +ProcessObjects()
+    }
+
+    class RestorePoint
+    {
+        -id : uint
+        -dateOfCreation : DateTime
+        -storages : List<Storage>
+    }
+
+    class RestorePointJobObjectsInfo
+    {
+        -fullJobObjectNames : List<string>
+    }
+
+    interface IJobObject
+    {
+        -name : string
+        -extension : string
+        +GetRepresentation() : byte[]
+    }
+
+    interface IStorageAlgorithm
+    {
+        +OrganizeJobObjects(List<IJobObject>) : List<Storage>
+    }
+
+    class Storage
+    {
+        -jobObjects : List<IJobObject>
+    }
+
+
+    class MemoryRepository
+    {
+        -memoryRestorePointDirectories : List<memoryRestorePointDirectory>
+        +SaveRestorePoint(RestorePoint)
+    }
+
+    class MemoryRestorePointDirectory
+    {
+        -memoryStorages : List<memoryStorage>
+    }
+
+    class MemoryStorage
+    {
+        -jobObjects : List<MemoryJobObject>
+    }
+
+    class MemoryJobObject
+    {
+        -fullName
+        -representation
+    }
+
+    class FileSystemRepository
+    {
+        -backupDirectoryPath : string
+        -archiver : IArchiver
+        -storageNameGiver : StorageNameGiver
+        +SaveRestorePoint(RestorePoint)
+    }
+
+    class FileObject
+    {
+        -directoryPath : string
+        -name : string
+        -extension : string
+        +GetRepresentation() : byte[]
+    }
+
+    class EmptyJobObject
+    {
+        -name : string
+        -extension : string
+        +GetRepresentation() : byte[]
+    }
+
+    interface IArchiver
+    {
+        +SaveStorage(Storage, string, string)
+    }
+
+    class SplitStoragesAlgorithm
+    {
+        +OrganizeFiles(List<IJobObject>) : List<Storage>
+    }
+
+    class SingleStorageAlgorithm
+    {
+        +OrganizeFiles(List<IJobObject>) : List<Storage>
+    }
+
+    class ZipArchiver
+    {
+        +SaveStorage(Storage, string, string)
+    }
+
+    interface IStorageNameGiver
+    {
+        +GiveName(Storage)
+    }
+
+    class DefaultStorageNameGiver
+    {
+        +GiveName(Storage)
+    }
+
+    BackupJoba o--> IRepository
+    BackupJoba *--> RestorePointJobObjectsInfo
+    BackupJoba o--> IJobObject
+    BackupJoba o--> IStorageAlgorithm
+
+    RestorePoint o--> Storage
+
+    Storage o--> IJobObject
+
+    IRepository --> RestorePoint
+
+    IJobObject <|.. FileObject
+    IJobObject <|.. EmptyJobObject
+
+    IRepository <|.. MemoryRepository
+    IRepository <|.. FileSystemRepository
+
+    IStorageAlgorithm <|.. SplitStoragesAlgorithm 
+    IStorageAlgorithm <|.. SingleStorageAlgorithm
+    IStorageNameGiver <|.. DefaultStorageNameGiver
+
+    FileSystemRepository o--> IStorageNameGiver
+    FileSystemRepository o--> IArchiver
+
+    MemoryRepository o--> MemoryRestorePointDirectory
+    MemoryRestorePointDirectory o--> MemoryStorage
+    MemoryStorage o--> MemoryJobObject
+
+    IStorageAlgorithm ---> Storage
+
+    IArchiver <|.. ZipArchiver
+}
+package Backups.Client
+{
+    class BackupsTcpClient
+    {
+        -backupJoba : BackupJoba
+        -jsonStringBuilder : JsonStringBuilder
+        -ip : string
+        -port : int
+        +SendConfiguration()
+        +SendAddJobObject(IJobObject)
+        +SendRemoveJobObject(IJobObject)
+        +SendProcessObjects()
+        -SendData(string, string)
+    }
+
+    class JsonStringBuilder
+    {
+        +Clear()
+        +AddProperty(string, string)
+        +GetResult() : string
+    }
+
+    BackupsTcpClient *--> JsonStringBuilder
+    BackupsTcpClient o-> Backups.BackupJoba
+}
+
+package Backups.Server
+{
+    class BackupsTcpServer
+    {
+        -backupJoba : BackupJoba
+        -backupDirectory : string
+        +Start(IPAddress, int)
+        +ProcessData(string, string)
+        -Configure(JsonElement)
+        -AddObject(JsonElement, string)
+        -RemoveObject(JsonElement, string)
+    }
+
+    class BackupsFactory
+    {
+        +GetAlgorithm(string) : IStorageAlgorithm
+        +GetRepository(JsonElement) : IRepository
+        +GetArchiver(string) : IArchiver
+        +GetStorageNameGiver(string) : IStorageNameGiver
+    }
+
+    class UniversalJobObject
+    {
+        -name : string
+        -extension : string
+        +GetRepresentation() : byte
+    }
+
+    BackupsTcpServer *--> BackupsFactory
+    BackupsTcpServer o--> Backups.BackupJoba
+    Backups.IJobObject <|.. UniversalJobObject
+}
+
+@enduml
