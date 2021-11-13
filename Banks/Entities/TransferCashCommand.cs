@@ -11,6 +11,10 @@
             _moneyToTransfer = moneyToTransfer;
         }
 
+        private TransferCashCommand()
+        {
+        }
+
         public override void Execute()
         {
             BankAccount.Cash -= (int)_moneyToTransfer;

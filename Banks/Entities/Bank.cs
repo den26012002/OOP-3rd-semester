@@ -6,11 +6,11 @@ namespace Banks.Entities
 {
     public class Bank
     {
-        private uint _nextAccountId = 0;
+        private int _nextAccountId = 0;
         private List<Client> _clients;
         private List<BaseBankAccount> _bankAccounts;
 
-        internal Bank(uint id, CentralBank centralBank, string name, BankConditions conditions = default)
+        internal Bank(int id, CentralBank centralBank, string name, BankConditions conditions = default)
         {
             Id = id;
             CentralBank = centralBank;
@@ -21,23 +21,17 @@ namespace Banks.Entities
             Conditions = conditions;
         }
 
-        public uint Id { get; }
-        public CentralBank CentralBank { get; }
-        public string Name { get; }
+        private Bank()
+        {
+        }
+
+        public int Id { get; private init; }
+        public CentralBank CentralBank { get; init; }
+        public string Name { get; private init; }
         public IReadOnlyList<Client> Clients => _clients;
         public IReadOnlyList<BaseBankAccount> BankAccounts => _bankAccounts;
-        public BankEventManager EventManager { get; }
+        public BankEventManager EventManager { get; private init; }
         public BankConditions Conditions { get; private set; }
-
-        public void AddClient(Client client)
-        {
-            if (_clients.Contains(client))
-            {
-                throw new BanksException("Error: this client already exists");
-            }
-
-            _clients.Add(client);
-        }
 
         public BaseBankAccount AddBankAccount(Client accountClient, AccountType accountType, int startCash, DateTime expirationDateTime = default)
         {

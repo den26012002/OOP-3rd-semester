@@ -12,6 +12,9 @@ namespace Banks.Entities
             _bankEventListeners = new List<BankEventListener>();
         }
 
+        public int Id { get; private init; }
+        public IReadOnlyList<BankEventListener> BankEventListeners => _bankEventListeners;
+
         public void Subscribe(BankEventListener bankEventListener)
         {
             if (_bankEventListeners.Contains(bankEventListener))

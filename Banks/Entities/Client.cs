@@ -2,7 +2,7 @@
 {
     public class Client
     {
-        internal Client(uint id, string name, string surname, Address address = null, PassportData passportData = null)
+        internal Client(int id, string name, string surname, Address address = null, PassportData passportData = null)
         {
             Id = id;
             Name = name;
@@ -12,7 +12,11 @@
             BankEventListener = new BankEventListener();
         }
 
-        public uint Id { get; }
+        private Client()
+        {
+        }
+
+        public int Id { get; private init; }
         public string Name { get; set; }
         public string Surname { get; set; }
         public Address Address { get; set; }

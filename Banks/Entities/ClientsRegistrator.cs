@@ -4,7 +4,7 @@ namespace Banks.Entities
 {
     public class ClientsRegistrator
     {
-        private uint nextClientId;
+        private int nextClientId;
         private List<Client> _clients;
 
         public ClientsRegistrator()
@@ -12,6 +12,7 @@ namespace Banks.Entities
             _clients = new List<Client>();
         }
 
+        public int Id { get; private init; }
         public IReadOnlyList<Client> Clients => _clients;
 
         public Client RegisterClient(string name, string surname, Address address = default, PassportData passportData = default)

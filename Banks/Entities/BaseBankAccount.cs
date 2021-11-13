@@ -5,7 +5,7 @@ namespace Banks.Entities
 {
     public abstract class BaseBankAccount
     {
-        internal protected BaseBankAccount(uint id, Bank ownerBank, Client client, int startCash)
+        internal protected BaseBankAccount(int id, Bank ownerBank, Client client, int startCash)
         {
             Id = id;
             OwnerBank = ownerBank;
@@ -15,9 +15,13 @@ namespace Banks.Entities
             CountedFee = 0;
         }
 
-        public uint Id { get; }
-        public Bank OwnerBank { get; }
-        public Client AccountClient { get; }
+        protected BaseBankAccount()
+        {
+        }
+
+        public int Id { get; private init; }
+        public Bank OwnerBank { get; private init; }
+        public Client AccountClient { get; private init; }
         public double Cash { get; internal set; }
         protected Stack<Transaction> CommandsHistory { get; set; }
         protected DateTime ActualDateTime { get; set; }

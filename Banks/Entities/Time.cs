@@ -11,6 +11,7 @@ namespace Banks.Entities
             _dateTime = startDateTime;
         }
 
+        public int Id { get; private init; }
         public DateTime Now { get => _dateTime.Date; }
         public void Scroll(int numberOfDays)
         {

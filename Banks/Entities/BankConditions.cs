@@ -13,8 +13,13 @@ namespace Banks.Entities
             _depositFees = depositFees;
         }
 
-        public int ShadyCustomersLimit { get; }
-        public uint CreditFee { get; }
+        private BankConditions()
+        {
+        }
+
+        public int Id { get; private init; }
+        public int ShadyCustomersLimit { get; private init; }
+        public uint CreditFee { get; private init; }
         public IReadOnlyList<DepositFee> DepositFees => _depositFees;
 
         public override string ToString()

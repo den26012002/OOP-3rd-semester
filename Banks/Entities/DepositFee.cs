@@ -8,7 +8,8 @@
             Percents = percents;
         }
 
-        public int Limit { get; }
-        public double Percents { get; }
+        public int Id { get; private init; }
+        public int Limit { get; private init; }
+        public double Percents { get; private init; }
     }
 }

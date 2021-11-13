@@ -10,7 +10,12 @@ namespace Banks.Entities
             TransactionDate = transactionDate;
         }
 
-        public BaseCashCommand CashCommand { get; }
-        public DateTime TransactionDate { get; }
+        private Transaction()
+        {
+        }
+
+        public int Id { get; private init; }
+        public BaseCashCommand CashCommand { get; private init; }
+        public DateTime TransactionDate { get; private init; }
     }
 }

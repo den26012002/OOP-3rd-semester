@@ -8,7 +8,8 @@
             Number = number;
         }
 
-        public uint Series { get; }
-        public uint Number { get; }
+        public int Id { get; private init; }
+        public uint Series { get; private init; }
+        public uint Number { get; private init; }
     }
 }

@@ -6,8 +6,12 @@ namespace Banks.Entities
     public class CreditsBankAccount : BaseBankAccount
     {
         private readonly int _minUnpayedCash = 0;
-        internal CreditsBankAccount(uint id, Bank bankOwner, Client client, int startCash)
+        internal CreditsBankAccount(int id, Bank bankOwner, Client client, int startCash)
             : base(id, bankOwner, client, startCash)
+        {
+        }
+
+        private CreditsBankAccount()
         {
         }
 

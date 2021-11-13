@@ -10,7 +10,7 @@ namespace Banks.Entities
         private bool _isExpired;
         private int _startCash;
 
-        internal DepositsBankAccount(uint id, Bank bankOwner, Client accountClient, int startCash, DateTime expirationTime)
+        internal DepositsBankAccount(int id, Bank bankOwner, Client accountClient, int startCash, DateTime expirationTime)
             : base(id, bankOwner, accountClient, startCash)
         {
             if (startCash < 0)
@@ -21,6 +21,10 @@ namespace Banks.Entities
             _startCash = startCash;
             _expirationTime = expirationTime;
             _isExpired = false;
+        }
+
+        private DepositsBankAccount()
+        {
         }
 
         public override void WithdrawalCash(uint moneyToDraw)

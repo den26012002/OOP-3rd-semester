@@ -8,7 +8,8 @@
             HouseNumber = houseNumber;
         }
 
-        public string Street { get; }
-        public uint HouseNumber { get; }
+        public int Id { get; private init; }
+        public string Street { get; private init; }
+        public uint HouseNumber { get; private init; }
     }
 }

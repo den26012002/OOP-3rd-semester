@@ -7,7 +7,7 @@ namespace Banks.Entities
     public class CentralBank
     {
         private readonly int _payingFeesNotificationDay = 1;
-        private uint _nextBankId = 0;
+        private int _nextBankId = 0;
         private List<Bank> _banks;
         private Time _time;
 
@@ -18,8 +18,13 @@ namespace Banks.Entities
             CentralClientsRegistrator = new ClientsRegistrator();
         }
 
+        private CentralBank()
+        {
+        }
+
+        public int Id { get; private init; }
         public IReadOnlyList<Bank> Banks => _banks;
-        public ClientsRegistrator CentralClientsRegistrator { get; }
+        public ClientsRegistrator CentralClientsRegistrator { get; private set; }
 
         public Bank AddBank(string bankName, BankConditions conditions = default)
         {
@@ -57,6 +62,16 @@ namespace Banks.Entities
         public DateTime GetDateNow()
         {
             return _time.Now;
+        }
+
+        internal void UpdateBanksClients(List<Bank> banks, List<Client> clients)
+        {
+            _banks = banks;
+            CentralClientsRegistrator = new ClientsRegistrator();
+            foreach (Client client in clients)
+            {
+                CentralClientsRegistrator.RegisterClient(client.Name, client.Surname, client.Address, client.PassportData);
+            }
         }
 
         private void NotifyCountFees(DateTime dateTime)

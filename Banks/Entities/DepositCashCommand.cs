@@ -9,6 +9,10 @@
             _moneyToDeposit = moneyToDeposit;
         }
 
+        private DepositCashCommand()
+        {
+        }
+
         public override void Execute()
         {
             BankAccount.Cash += (int)_moneyToDeposit;

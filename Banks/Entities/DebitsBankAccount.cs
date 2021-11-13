@@ -7,13 +7,17 @@ namespace Banks.Entities
     {
         private readonly int _minAllowedCash = 0;
 
-        internal DebitsBankAccount(uint id, Bank bankOwner, Client client, int startCash)
+        internal DebitsBankAccount(int id, Bank bankOwner, Client client, int startCash)
             : base(id, bankOwner, client, startCash)
         {
             if (startCash < 0)
             {
                 throw new BanksException("Error: money on debits account can't be less than 0");
             }
+        }
+
+        private DebitsBankAccount()
+        {
         }
 
         public override void WithdrawalCash(uint moneyToDraw)

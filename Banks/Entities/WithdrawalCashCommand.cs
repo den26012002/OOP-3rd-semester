@@ -9,6 +9,10 @@
             _moneyToDraw = moneyToDraw;
         }
 
+        private WithdrawalCashCommand()
+        {
+        }
+
         public override void Execute()
         {
             BankAccount.Cash -= (int)_moneyToDraw;
