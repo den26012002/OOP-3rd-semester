@@ -115,7 +115,7 @@ namespace Banks.Entities
             if (Cash >= _minAllowedCash)
             {
                 TimeSpan deltaTime = dateTime - ActualDateTime;
-                CountedFee += (int)((double)deltaTime.Days * Cash * FindPercents(_startCash) / 100.0);
+                CountedFee += deltaTime.Days * Cash * FindPercents(_startCash) / 100.0 / 365.0;
 
                 ActualDateTime = new DateTime(dateTime.Year, dateTime.Month, dateTime.Day);
             }
