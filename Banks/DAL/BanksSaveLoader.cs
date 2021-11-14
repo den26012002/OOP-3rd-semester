@@ -38,19 +38,9 @@ namespace Banks.DAL
             banksContext.BankEventManagers.ToList();
             banksContext.BanksConditions.ToList();
             banksContext.CashCommands.ToList();
+            banksContext.CentralBanks.ToList();
             banksContext.Transactions.ToList();
             _centralBank.UpdateBanksClients(banks, clients);
-            /*foreach (Bank bank in banks)
-            {
-                Bank newBank = _centralBank.AddBank(bank.Name, bank.Conditions);
-                foreach (BaseBankAccount bankAccount in bank.BankAccounts)
-                {
-                    if (bankAccount is DebitsBankAccount debitsBankAccount)
-                    {
-                        newBank.AddBankAccount(debitsBankAccount.AccountClient, AccountType.Debit, )
-                    }
-                }
-            }*/
         }
     }
 }

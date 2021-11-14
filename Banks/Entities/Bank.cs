@@ -7,7 +7,6 @@ namespace Banks.Entities
     public class Bank
     {
         private int _nextAccountId = 0;
-        private List<Client> _clients;
         private List<BaseBankAccount> _bankAccounts;
 
         internal Bank(int id, CentralBank centralBank, string name, BankConditions conditions = default)
@@ -15,7 +14,6 @@ namespace Banks.Entities
             Id = id;
             CentralBank = centralBank;
             Name = name;
-            _clients = new List<Client>();
             _bankAccounts = new List<BaseBankAccount>();
             EventManager = new BankEventManager();
             Conditions = conditions;
@@ -28,7 +26,6 @@ namespace Banks.Entities
         public int Id { get; private init; }
         public CentralBank CentralBank { get; init; }
         public string Name { get; private init; }
-        public IReadOnlyList<Client> Clients => _clients;
         public IReadOnlyList<BaseBankAccount> BankAccounts => _bankAccounts;
         public BankEventManager EventManager { get; private init; }
         public BankConditions Conditions { get; private set; }
