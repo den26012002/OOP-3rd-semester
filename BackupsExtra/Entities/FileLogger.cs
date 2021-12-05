@@ -16,6 +16,7 @@ namespace BackupsExtra.Entities
             }
         }
 
+        public string LogFileName => _logFileName;
         public void Log(string message)
         {
             using (var ofstream = new FileStream(_logFileName, FileMode.Append))

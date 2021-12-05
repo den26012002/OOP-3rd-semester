@@ -6,7 +6,7 @@ namespace BackupsExtra.Entities
     {
         public void Log(string message)
         {
-            Console.Write(message);
+            Console.WriteLine(message);
         }
     }
 }

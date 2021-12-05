@@ -2,14 +2,16 @@
 
 namespace BackupsExtra.Entities
 {
-    public class TimeLoggerDecorator : ILogger
+    public class LoggerTimeDecorator : ILogger
     {
         private ILogger _logger;
 
-        public TimeLoggerDecorator(ILogger logger)
+        public LoggerTimeDecorator(ILogger logger)
         {
             _logger = logger;
         }
+
+        public ILogger OriginalLogger => _logger;
 
         public void Log(string message)
         {
