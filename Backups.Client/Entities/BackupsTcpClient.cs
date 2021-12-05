@@ -2,6 +2,8 @@
 using System.Net.Sockets;
 using System.Text;
 using Backups.Entities;
+using Backups.Tools;
+using BackupsExtra.Entities;
 
 namespace Backups.Client.Entities
 {
@@ -9,12 +11,14 @@ namespace Backups.Client.Entities
     {
         private BackupJoba _backupJoba;
         private JsonStringBuilder _jsonStringBuilder;
+        private BackupJobaJsonRepresenter _jobaJsonRepresenter;
         private string _ip;
         private int _port;
         public BackupsTcpClient(string ip, int port, BackupJoba backupJoba)
         {
             _backupJoba = backupJoba;
             _jsonStringBuilder = new JsonStringBuilder();
+            _jobaJsonRepresenter = new BackupJobaJsonRepresenter(backupJoba);
             _ip = ip;
             _port = port;
         }
@@ -22,22 +26,10 @@ namespace Backups.Client.Entities
         public void SendConfiguration()
         {
             _jsonStringBuilder.Clear();
-            string backupJobaName = _backupJoba.Name;
-            string storageAlgorithmName = _backupJoba.StorageAlgorithm.GetType().Name;
-            string repositoryName = _backupJoba.Repository.GetType().Name;
-
             _jsonStringBuilder.AddProperty("MessageType", "Configuration");
-            _jsonStringBuilder.AddProperty("BackupJobaName", backupJobaName);
-            _jsonStringBuilder.AddProperty("Algorithm", storageAlgorithmName);
-            _jsonStringBuilder.AddProperty("Repository", repositoryName);
-
-            if (_backupJoba.Repository is FileSystemRepository fileSystemRepository)
-            {
-                string archiverName = fileSystemRepository.Archiver.GetType().Name;
-                string storageNameGiverName = fileSystemRepository.StorageNameGiver.GetType().Name;
-                _jsonStringBuilder.AddProperty("Archiver", archiverName);
-                _jsonStringBuilder.AddProperty("StorageNameGiver", storageNameGiverName);
-            }
+            _jsonStringBuilder.AddProperty(
+                "BackupJoba",
+                Encoding.Default.GetString(_jobaJsonRepresenter.GetConfigurationRepresentation()));
 
             SendData(_jsonStringBuilder.GetResult());
         }
