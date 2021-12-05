@@ -1,8 +1,7 @@
 ﻿using System.Linq;
 using System.Text;
-using Backups.Entities;
 
-namespace Backups.Server.Entities
+namespace Backups.Entities
 {
     public class UniversalJobObject : IJobObject
     {
