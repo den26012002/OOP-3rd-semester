@@ -1,16 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Backups.Tools;
 
 namespace Backups.Entities
 {
-    public class BackupJoba
+    public class BackupJoba : IBackupJoba
     {
         private uint _nextRestorePointId = 1;
         private List<IJobObject> _currentObjects;
         private IStorageAlgorithm _storageAlgorithm;
         private IRepository _repository;
         private List<RestorePointJobObjectsInfo> _createdRestorePointsJobObjectsInfo;
-
         public BackupJoba(string name, IStorageAlgorithm storageAlgorithm, IRepository repository)
         {
             Name = name;
@@ -44,9 +44,20 @@ namespace Backups.Entities
         public void ProcessObjects()
         {
             List<Storage> storages = _storageAlgorithm.OrganizeJobObjects(_currentObjects);
-            var restorePoint = new RestorePoint(_nextRestorePointId++, storages);
-            _createdRestorePointsJobObjectsInfo.Add(new RestorePointJobObjectsInfo(_currentObjects));
+            uint restorePointId = _nextRestorePointId++;
+            var restorePoint = new RestorePoint(restorePointId, storages);
+            _createdRestorePointsJobObjectsInfo.Add(new RestorePointJobObjectsInfo(restorePointId, DateTime.Now, _currentObjects));
             _repository.SaveRestorePoint(restorePoint);
+        }
+
+        public void UpdateSavedRestorePointsInfo(List<RestorePointFileDirectoryInfo> restorePointFileDirectoryInfos, List<RestorePointJobObjectsInfo> restorePointJobObjectsInfos)
+        {
+            if (_repository is FileSystemRepository fileSystemRepository)
+            {
+                fileSystemRepository.UpdateRestorePointFileDirectoryInfos(restorePointFileDirectoryInfos);
+            }
+
+            _createdRestorePointsJobObjectsInfo = restorePointJobObjectsInfos;
         }
     }
 }

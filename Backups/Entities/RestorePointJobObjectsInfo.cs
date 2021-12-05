@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Backups.Entities
 {
@@ -6,8 +7,10 @@ namespace Backups.Entities
     {
         private List<string> _fullJobObjectNames;
 
-        internal RestorePointJobObjectsInfo(List<IJobObject> jobObjects)
+        public RestorePointJobObjectsInfo(uint id, DateTime dateOfCreation, List<IJobObject> jobObjects)
         {
+            Id = id;
+            DateOfCreation = dateOfCreation;
             _fullJobObjectNames = new List<string>();
             foreach (IJobObject jobObject in jobObjects)
             {
@@ -15,6 +18,15 @@ namespace Backups.Entities
             }
         }
 
+        public RestorePointJobObjectsInfo(uint id, DateTime dateOfCreation, List<string> fullJobObjectsNames)
+        {
+            Id = id;
+            DateOfCreation = dateOfCreation;
+            _fullJobObjectNames = fullJobObjectsNames;
+        }
+
+        public uint Id { get; }
+        public DateTime DateOfCreation { get; }
         public IReadOnlyList<string> FullJobObjectsNames => _fullJobObjectNames;
     }
 }
