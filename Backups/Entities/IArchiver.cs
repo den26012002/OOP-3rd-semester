@@ -6,6 +6,6 @@ namespace Backups.Entities
     {
         void SaveStorage(Storage storage, string storageDirectoryPath, string storageName);
 
-        public List<Storage> LoadStorages(string storageDirectoryPath);
+        List<Storage> LoadStorages(string storageDirectoryPath);
     }
 }
