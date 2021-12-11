@@ -61,10 +61,8 @@ namespace Backups.Entities
 
         public void MergeRestorePoints(uint oldRestorePointId, uint newRestorePointId)
         {
-            var oldDirectoryInfo = new DirectoryInfo(
-                _restorePointFileDirectoryInfos.Find(info => info.RestorePointId == oldRestorePointId).RestorePointDirectory);
-            var newDirectoryInfo = new DirectoryInfo(
-                _restorePointFileDirectoryInfos.Find(info => info.RestorePointId == newRestorePointId).RestorePointDirectory);
+            DirectoryInfo oldDirectoryInfo = GetDirectoryInfo(oldRestorePointId);
+            DirectoryInfo newDirectoryInfo = GetDirectoryInfo(newRestorePointId);
 
             FileInfo[] oldStoragesInfos = oldDirectoryInfo.GetFiles();
             FileInfo[] newStoragesInfos = newDirectoryInfo.GetFiles();
@@ -99,6 +97,11 @@ namespace Backups.Entities
         internal void UpdateRestorePointFileDirectoryInfos(List<RestorePointFileDirectoryInfo> restorePointFileDirectoryInfos)
         {
             _restorePointFileDirectoryInfos = restorePointFileDirectoryInfos;
+        }
+
+        private DirectoryInfo GetDirectoryInfo(uint restorePointId)
+        {
+            return new DirectoryInfo(_restorePointFileDirectoryInfos.Find(info => info.RestorePointId == restorePointId).RestorePointDirectory);
         }
     }
 }

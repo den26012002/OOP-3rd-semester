@@ -27,8 +27,8 @@ namespace Backups.Entities
 
         public void MergeRestorePoints(uint oldRestorePointId, uint newRestorePointId)
         {
-            IReadOnlyList<MemoryStorage> oldDirectory = _memoryRestorePointDirectories.Find(directory => directory.RestorePointId == oldRestorePointId).MemoryStorages;
-            IReadOnlyList<MemoryStorage> newDirectory = _memoryRestorePointDirectories.Find(directory => directory.RestorePointId == newRestorePointId).MemoryStorages;
+            IReadOnlyList<MemoryStorage> oldDirectory = GetMemoryStorages(oldRestorePointId);
+            IReadOnlyList<MemoryStorage> newDirectory = GetMemoryStorages(newRestorePointId);
             var resultDirectory = new List<MemoryStorage>();
             foreach (MemoryStorage memoryStorage in oldDirectory)
             {
@@ -61,6 +61,11 @@ namespace Backups.Entities
             }
 
             return jobObjects;
+        }
+
+        private IReadOnlyList<MemoryStorage> GetMemoryStorages(uint restorePointId)
+        {
+            return _memoryRestorePointDirectories.Find(directory => directory.RestorePointId == restorePointId).MemoryStorages;
         }
     }
 }
