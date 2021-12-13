@@ -4,12 +4,13 @@ using System.Net.Sockets;
 using System.Text;
 using System.Text.Json;
 using Backups.Entities;
+using BackupsExtra.Entities;
 
 namespace Backups.Server.Entities
 {
     public class BackupTcpServer
     {
-        private BackupJoba _backupJoba;
+        private IBackupJoba _backupJoba;
         private string _backupsDirectory;
         public BackupTcpServer(string backupsDirectory)
         {
@@ -79,13 +80,18 @@ namespace Backups.Server.Entities
 
         private void Configure(JsonElement configurationJsonElement)
         {
-            string backupJobaName = configurationJsonElement.GetProperty("BackupJobaName").ToString();
-            string algorithmName = configurationJsonElement.GetProperty("Algorithm").ToString();
-            var backupsFactory = new BackupsFactory();
-            _backupJoba = new BackupJoba(
-                backupJobaName,
-                backupsFactory.GetAlgorithm(algorithmName),
-                backupsFactory.GetRepository(configurationJsonElement, _backupsDirectory));
+            var backupsFactory = new BackupsJsonFactory(configurationJsonElement.GetProperty("BackupJoba"));
+            _backupJoba = backupsFactory.GetBackupJoba();
+            IRepository repository = _backupJoba.Repository;
+            while (repository is RepositoryLogDecorator repositoryLogDecorator)
+            {
+                repository = repositoryLogDecorator.OriginalRepository;
+            }
+
+            if (repository is FileSystemRepository fileSystemRepository)
+            {
+                fileSystemRepository.ChangeBackupsDirectory(_backupsDirectory + '\\' + _backupJoba.Name);
+            }
         }
 
         private void AddObject(JsonElement objectJsonElement, string representation)

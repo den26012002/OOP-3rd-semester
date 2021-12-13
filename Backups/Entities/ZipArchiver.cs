@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.IO.Compression;
 using System.Text;
 
@@ -22,6 +23,35 @@ namespace Backups.Entities
                     }
                 }
             }
+        }
+
+        public List<Storage> LoadStorages(string storageDirectoryPath)
+        {
+            var directoryInfo = new DirectoryInfo(storageDirectoryPath);
+            FileInfo[] files = directoryInfo.GetFiles();
+            var storages = new List<Storage>();
+            foreach (FileInfo file in files)
+            {
+                using (var zipToRead = new FileStream($"{storageDirectoryPath}\\{file.Name}", FileMode.Open))
+                {
+                    using (var archive = new ZipArchive(zipToRead, ZipArchiveMode.Read))
+                    {
+                        var storageJobObjects = new List<IJobObject>();
+                        foreach (ZipArchiveEntry entry in archive.Entries)
+                        {
+                            using (var reader = new StreamReader(entry.Open()))
+                            {
+                                string fileContent = reader.ReadToEnd();
+                                storageJobObjects.Add(new UniversalJobObject(entry.Name, string.Empty, fileContent));
+                            }
+                        }
+
+                        storages.Add(new Storage(storageJobObjects));
+                    }
+                }
+            }
+
+            return storages;
         }
     }
 }
