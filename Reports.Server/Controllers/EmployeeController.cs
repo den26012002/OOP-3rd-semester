@@ -2,6 +2,7 @@ using System;
 using Microsoft.AspNetCore.Mvc;
 using Reports.Infrastructure.Services;
 using Reports.Core.Entities;
+using Reports.Core.Tools;
 
 namespace Reports.Server.Controllers
 {
@@ -18,30 +19,60 @@ namespace Reports.Server.Controllers
 
         [HttpPost]
         [Route("create")]
-        public Employee Create([FromQuery] string name, [FromQuery] Guid? bossId = null)
+        public IActionResult Create([FromQuery] string name, [FromQuery] Guid? bossId = null)
         {
-            return _employeeService.Create(name, bossId);
+            try
+            {
+                return Ok(_employeeService.Create(name, bossId));
+            }
+            catch (ReportsException)
+            {
+                return BadRequest();
+            }
         }
 
         [HttpPost]
         [Route("delete")]
-        public void Delete([FromQuery] Guid employeeId)
+        public IActionResult Delete([FromQuery] Guid employeeId)
         {
-            _employeeService.Delete(employeeId);
+            try
+            {
+                _employeeService.Delete(employeeId);
+                return Ok();
+            }
+            catch (ReportsException)
+            {
+                return BadRequest();
+            }
         }
 
         [HttpPost]
         [Route("update")]
-        public void Update([FromQuery] Guid employeeId, [FromQuery] Guid newBossId)
+        public IActionResult Update([FromQuery] Guid employeeId, [FromQuery] Guid newBossId)
         {
-            _employeeService.Update(employeeId, newBossId);
+            try
+            {
+                _employeeService.Update(employeeId, newBossId);
+                return Ok();
+            }
+            catch (ReportsException)
+            {
+                return BadRequest();
+            }
         }
 
         [HttpGet]
         [Route("get")]
-        public Employee GetById([FromQuery] Guid id)
+        public IActionResult GetById([FromQuery] Guid id)
         {
-            return _employeeService.GetById(id);
+            try
+            {
+                return Ok(_employeeService.GetById(id));
+            }
+            catch (ReportsException)
+            {
+                return BadRequest();
+            }
         }
 
         [HttpGet]
